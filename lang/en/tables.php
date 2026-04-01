@@ -19,4 +19,7 @@ return [
     'store_categories' => [
         'stores_count' => 'Stores Count',
     ],
+    'stores' => [
+        'category' => 'Category',
+    ],
 ];

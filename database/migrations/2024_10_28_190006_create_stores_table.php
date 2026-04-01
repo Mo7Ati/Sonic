@@ -14,19 +14,19 @@ return new class extends Migration {
             $table->id();
             $table->json('name');
             $table->string('slug')->unique();
-            $table->json('address');
+            // $table->json('address');
             $table->json('description')->nullable();
             $table->json('keywords')->nullable();
 
             $table->json('social_media')->nullable();
 
             $table->string('email')->unique();
-            $table->string('phone')->unique();
+            $table->string('phone')->nullable()->unique();
             $table->string('password');
             $table->foreignId('category_id')->nullable()->constrained('store_categories');
 
-            $table->integer('delivery_time');
-            $table->json('delivery_area_polygon')->nullable();
+            // $table->integer('delivery_time');
+            // $table->json('delivery_area_polygon')->nullable();
             $table->boolean('is_active')->default(true);
 
 

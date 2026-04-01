@@ -4,7 +4,11 @@ namespace App\Models;
 
 use Bavix\Wallet\Interfaces\Wallet;
 use Bavix\Wallet\Traits\HasWallet;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,39 +17,23 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
 
+#[Fillable(['name', 'slug', 'description', 'keywords', 'social_media', 'email', 'phone', 'password', 'category_id', 'is_active'])]
+#[Hidden(['password', 'remember_token'])]
 class Store extends Authenticatable implements HasMedia, Wallet
 {
-    use HasFactory, HasTranslations, InteractsWithMedia, HasWallet;
-
-    protected $fillable = [
-        'name',
-        'slug',
-        'address',
-        'description',
-        'keywords',
-        'social_media',
-        'email',
-        'phone',
-        'password',
-        'category_id',
-        'delivery_time',
-        'delivery_area_polygon',
-        'is_active',
-        'profile_completed_at',
-    ];
+    use HasFactory, HasTranslations, HasWallet, InteractsWithMedia, SoftDeletes;
 
     protected $casts = [
         'name' => 'array',
-        'address' => 'array',
+        // 'address' => 'array',
         'description' => 'array',
         'keywords' => 'array',
         'social_media' => 'array',
-        'delivery_area_polygon' => 'json',
-        'profile_completed_at' => 'datetime',
+        // 'delivery_area_polygon' => 'json',
+        // 'profile_completed_at' => 'datetime',
     ];
 
-
-    public array $translatable = ['name', 'description', 'address'];
+    public array $translatable = ['name', 'description', 'keywords']; // , 'address'
 
     protected static function booted()
     {
@@ -62,35 +50,42 @@ class Store extends Authenticatable implements HasMedia, Wallet
         });
     }
 
-    public function hasCompletedProfile(): bool
-    {
-        return $this->profile_completed_at !== null;
-    }
+    // public function hasCompletedProfile(): bool
+    // {
+    //     return $this->profile_completed_at !== null;
+    // }
 
-    public function setPasswordAttribute($value)
+    public function setPasswordAttribute(?string $value): void
     {
-        if (!empty($value)) {
-            $this->attributes['password'] = Hash::make($value);
+        if (! filled($value)) {
+            return;
         }
-    }
 
+        $this->attributes['password'] = Hash::isHashed((string) $value)
+            ? $value
+            : Hash::make($value);
+    }
 
     public function category()
     {
         return $this->belongsTo(StoreCategory::class);
     }
+
     public function products()
     {
         return $this->hasMany(Product::class);
     }
+
     public function additions()
     {
         return $this->hasMany(Addition::class);
     }
+
     public function options()
     {
         return $this->hasMany(Option::class);
     }
+
     public function categories()
     {
         return $this->hasMany(Category::class);
@@ -106,12 +101,14 @@ class Store extends Authenticatable implements HasMedia, Wallet
             'social_media',
         ], 'like', "%{$search}%");
     }
+
     public function scopeCategory($query, $category)
     {
         return $query->whereHas('category', function ($query) use ($category) {
             $query->where('slug', $category);
         });
     }
+
     public function scopeActive($query, $value = true)
     {
         return $query->where('is_active', $value);
@@ -120,15 +117,14 @@ class Store extends Authenticatable implements HasMedia, Wallet
     /**
      * Apply filters to the query (scope – call as applyFilters($request)).
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  Request  $request
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @return Builder
      */
     public function scopeApplyFilters($query, Request $request)
     {
         return $query
-            ->when($request->input('search'), fn($q, $search) => $q->search($search))
-            ->when($request->input('category'), fn($q, $category) => $q->category($category))
-            ->when($request->filled('is_active'), fn($q) => $q->active($request->input('is_active')));
+            ->when($request->input('search'), fn ($q, $search) => $q->search($search))
+            ->when($request->input('category'), fn ($q, $category) => $q->category($category))
+            ->when($request->filled('is_active'), fn ($q) => $q->active($request->input('is_active')));
     }
 }

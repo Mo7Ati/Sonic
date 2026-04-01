@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\StoreCategories\Tables;
+namespace App\Filament\Resources\Stores\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -8,13 +8,16 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
-class StoreCategoriesTable
+class StoresTable
 {
     public static function configure(Table $table): Table
     {
@@ -23,39 +26,52 @@ class StoreCategoriesTable
                 SpatieMediaLibraryImageColumn::make('image')
                     ->circular()
                     ->label(__('tables.common.image'))
-                    ->collection('store_categories_images')
+                    ->collection('store_images')
                     ->toggleable(),
 
                 TextColumn::make('name')
                     ->label(__('tables.common.name'))
                     ->searchable(),
 
-                TextColumn::make('stores_count')
-                    ->counts('stores')
-                    ->label(__('tables.store_categories.stores_count'))
+                TextColumn::make('email')
+                    ->label(__('tables.common.email'))
+                    ->searchable(),
+
+                TextColumn::make('category.name')
+                    ->label(__('tables.stores.category'))
                     ->sortable(),
+
+                ToggleColumn::make('is_active')
+                    ->label(__('tables.common.is_active')),
 
                 TextColumn::make('deleted_at')
                     ->label(__('tables.common.deleted_at'))
-                    ->dateTime("d-m-Y")
+                    ->dateTime('d-m-Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
-                    ->dateTime("d-m-Y")
                     ->label(__('tables.common.created_at'))
+                    ->dateTime('d-m-Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('updated_at')
                     ->label(__('tables.common.updated_at'))
-                    ->dateTime("d-m-Y")
+                    ->dateTime('d-m-Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                TrashedFilter::make(),
+                SelectFilter::make('category_id')
+                    ->label(__('tables.stores.category'))
+                    ->relationship('category', 'name')
+                    ->preload()
+                    ->searchable(),
 
+                TernaryFilter::make('is_active')
+                    ->label(__('tables.common.is_active'))
+                    ->placeholder(__('tables.common.all')),
             ])
             ->recordActions([
                 EditAction::make(),

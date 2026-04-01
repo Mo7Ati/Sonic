@@ -19,4 +19,7 @@ return [
     'store_categories' => [
         'stores_count' => 'عدد المتاجر',
     ],
+    'stores' => [
+        'category' => 'التصنيف',
+    ],
 ];
