@@ -19,7 +19,7 @@ class AdminResource extends Resource
 {
     protected static ?string $model = Admin::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::User;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -52,5 +52,25 @@ class AdminResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with('roles');
+    }
+    public static function getNavigationGroup(): ?string
+    {
+        return __('general.navigation_groups.Management');
+    }
+    public static function getNavigationLabel(): string
+    {
+        return __('general.nav_labels.admins');
+    }
+    public static function getPluralModelLabel(): string
+    {
+        return __('general.plural_model_labels.admins');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('general.model_labels.admin');
+    }
+    public static function getBreadcrumb(): string
+    {
+        return __('general.plural_model_labels.admins');
     }
 }
