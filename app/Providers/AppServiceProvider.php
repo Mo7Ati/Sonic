@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
 use App\Policies\RolePolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -22,10 +23,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Gate::guessPolicyNamesUsing(function (string $modelClass): string {
-        //     return str_replace('Models', 'Policies', $modelClass).'Policy';
-        // });
+        Gate::policy(Role::class, RolePolicy::class);
 
-        // Gate::policy(Role::class, RolePolicy::class);
+        TranslatableTabs::configureUsing(function (TranslatableTabs $component) {
+            $component
+                // locales labels
+                ->localesLabels([
+                    'ar' => __('general.locales.ar'),
+                    'en' => __('general.locales.en'),
+                ])
+                // default locales
+                ->locales(['ar', 'en']);
+        });
     }
 }

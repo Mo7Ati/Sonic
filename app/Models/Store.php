@@ -9,15 +9,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Laravel\Cashier\Billable;
-use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
 
 class Store extends Authenticatable implements HasMedia, Wallet
 {
-    use HasFactory, HasTranslations, TwoFactorAuthenticatable, InteractsWithMedia, Billable, HasWallet;
+    use HasFactory, HasTranslations, InteractsWithMedia, HasWallet;
 
     protected $fillable = [
         'name',

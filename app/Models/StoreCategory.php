@@ -2,22 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
 
+#[Fillable(['name', 'slug', 'description'])]
+
 class StoreCategory extends Model implements HasMedia
 {
-    use HasTranslations, HasFactory, InteractsWithMedia;
-    protected $fillable = [
-        'name',
-        'slug',
-        'description',
-    ];
+    use HasFactory, HasTranslations, InteractsWithMedia, SoftDeletes;
 
     protected $casts = [
         'name' => 'array',
