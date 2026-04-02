@@ -30,4 +30,9 @@ return [
     'cashiers' => [
         'branch' => 'الفرع',
     ],
+    'products' => [
+        'category' => 'التصنيف',
+        'quantity' => 'الكمية',
+        'accepted' => 'مقبول',
+    ],
 ];

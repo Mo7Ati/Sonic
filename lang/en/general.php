@@ -9,6 +9,7 @@ return [
         'settings' => 'Settings',
         'branches' => 'Branches',
         'cashiers' => 'Cashiers',
+        'products' => 'Products',
     ],
     'navigation_groups' => [
         'Management' => 'Management',
@@ -24,6 +25,7 @@ return [
         'sections' => 'Homepage Sections',
         'branches' => 'Branches',
         'cashiers' => 'Cashiers',
+        'products' => 'Products',
     ],
     'model_labels' => [
         'admin' => 'Admin',
@@ -32,6 +34,7 @@ return [
         'section' => 'Section',
         'branch' => 'Branch',
         'cashier' => 'Cashier',
+        'product' => 'Product',
     ],
     'settings' => [
         'platform_settings' => 'Platform Settings',

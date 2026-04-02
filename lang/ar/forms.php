@@ -59,6 +59,16 @@ return [
         'general_information_description' => 'بيانات الدخول وربط الفرع لأمين الصندوق.',
         'branch' => 'الفرع',
     ],
+    'products' => [
+        'content' => 'محتوى المنتج',
+        'content_description' => 'الاسم والوصف الظاهران للعملاء.',
+        'details' => 'تفاصيل الكتالوج',
+        'details_description' => 'التصنيف، المخزون، والظهور.',
+        'category' => 'التصنيف',
+        'quantity' => 'الكمية',
+        'accepted' => 'مقبول',
+        'accepted_helper' => 'عند التفعيل يُعتبر المنتج معتمداً للبيع (حسب قواعد المنصة).',
+    ],
     'section' => [
         'setting' => 'الإعدادات',
         'type_details' => 'تفاصيل القسم',

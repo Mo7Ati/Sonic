@@ -59,6 +59,16 @@ return [
         'general_information_description' => 'Login credentials and branch assignment for this cashier.',
         'branch' => 'Branch',
     ],
+    'products' => [
+        'content' => 'Product content',
+        'content_description' => 'Name and description shown to customers.',
+        'details' => 'Catalog details',
+        'details_description' => 'Category, stock, and visibility.',
+        'category' => 'Category',
+        'quantity' => 'Quantity',
+        'accepted' => 'Accepted',
+        'accepted_helper' => 'When on, the product is approved for sale (subject to platform rules).',
+    ],
     'section' => [
         'setting' => 'Settings',
         'type_details' => 'Section Details',

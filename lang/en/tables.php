@@ -30,4 +30,9 @@ return [
     'cashiers' => [
         'branch' => 'Branch',
     ],
+    'products' => [
+        'category' => 'Category',
+        'quantity' => 'Quantity',
+        'accepted' => 'Accepted',
+    ],
 ];

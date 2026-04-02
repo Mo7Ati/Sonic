@@ -23,6 +23,8 @@ class Product extends Model implements HasMedia
         'description' => 'array',
         'address' => 'array',
         'keywords' => 'array',
+        'is_active' => 'boolean',
+        'is_accepted' => 'boolean',
     ];
 
     protected static function booted()
