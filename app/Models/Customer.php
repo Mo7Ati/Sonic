@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Customer extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use  Notifiable;
 
     protected $fillable = [
         'name',

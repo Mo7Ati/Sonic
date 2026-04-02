@@ -13,6 +13,8 @@ return [
         'leave_blank_to_keep_current_password' => 'اتركها فارغة للحفظ على كلمة المرور الحالية.',
         'keywords' => 'الكلمات المفتاحية',
         'social_media' => 'وسائل التواصل الاجتماعي',
+        'platform' => 'المنصة',
+        'url' => 'الرابط',
     ],
     'admins' => [
         'roles' => 'الأدوار',

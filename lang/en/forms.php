@@ -13,7 +13,8 @@ return [
         'leave_blank_to_keep_current_password' => 'Leave blank to keep the current password.',
         'keywords' => 'Keywords',
         'social_media' => 'Social Media',
-        'add'
+        'platform' => 'Platform',
+        'url' => 'URL',
     ],
     'admins' => [
         'roles' => 'Roles',

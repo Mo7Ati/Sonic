@@ -6,10 +6,12 @@ return [
         'store_categories' => 'Store categories',
         'stores' => 'Stores',
         'sections' => 'Homepage Sections',
+        'settings' => 'Settings',
     ],
     'navigation_groups' => [
         'Management' => 'Management',
         'Store' => 'Store',
+        'control_panel' => 'Control Panel',
     ],
     'plural_model_labels' => [
         'admins' => 'Admins',
@@ -22,6 +24,9 @@ return [
         'store_category' => 'Store category',
         'store' => 'Store',
         'section' => 'Section',
+    ],
+    'settings' => [
+        'platform_settings' => 'Platform Settings',
     ],
     'locales' => [
         'ar' => 'Arabic',
