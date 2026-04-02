@@ -21,6 +21,7 @@ class PlatformSettingsPage extends SettingsPage
     protected static string $settings = PlatformSettings::class;
 
     protected static ?string $cluster = SettingsCluster::class;
+    protected static ?int $navigationSort = 1;
 
     public function form(Schema $schema): Schema
     {

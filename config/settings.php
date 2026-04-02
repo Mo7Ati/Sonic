@@ -1,5 +1,6 @@
 <?php
 
+use App\Settings\OnboardingSettings;
 use App\Settings\PlatformSettings;
 
 return [
@@ -9,6 +10,7 @@ return [
      * put them (manually) here.
      */
     'settings' => [
+        OnboardingSettings::class,
         PlatformSettings::class,
     ],
 

@@ -70,4 +70,22 @@ return [
             'external_link' => 'رابط خارجي',
         ],
     ],
+
+    'onboarding' => [
+        'steps_section_heading' => 'شاشات الترحيب',
+        'steps_section_description' => 'حدد الخطوات التي يراها المستخدم عند فتح التطبيق لأول مرة.',
+        'steps' => 'الخطوات',
+        'step_title' => 'عنوان الخطوة',
+        'step_description' => 'وصف الخطوة',
+        'color' => 'اللون',
+        'add_step' => 'إضافة إلى خطوات شاشات الترحيب',
+        'colors' => [
+            'black' => 'أسود',
+            'white' => 'أبيض',
+            'amber' => 'كهرماني',
+            'blue' => 'أزرق',
+            'green' => 'أخضر',
+            'red' => 'أحمر',
+        ],
+    ],
 ];

@@ -70,4 +70,22 @@ return [
             'external_link' => 'External Link',
         ],
     ],
+
+    'onboarding' => [
+        'steps_section_heading' => 'Welcome screens',
+        'steps_section_description' => 'Define the steps users see when opening the app for the first time.',
+        'steps' => 'Steps',
+        'step_title' => 'Step title',
+        'step_description' => 'Step description',
+        'color' => 'Color',
+        'add_step' => 'Add to onboarding screen steps',
+        'colors' => [
+            'black' => 'Black',
+            'white' => 'White',
+            'amber' => 'Amber',
+            'blue' => 'Blue',
+            'green' => 'Green',
+            'red' => 'Red',
+        ],
+    ],
 ];

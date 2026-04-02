@@ -12,6 +12,7 @@ return [
         'Management' => 'Management',
         'Store' => 'Store',
         'control_panel' => 'Control Panel',
+        'mobile_application' => 'Mobile application',
     ],
     'plural_model_labels' => [
         'admins' => 'Admins',
@@ -27,6 +28,7 @@ return [
     ],
     'settings' => [
         'platform_settings' => 'Platform Settings',
+        'onboarding_settings' => 'Onboarding settings',
     ],
     'locales' => [
         'ar' => 'Arabic',

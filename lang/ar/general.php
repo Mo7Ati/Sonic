@@ -12,6 +12,7 @@ return [
         'Management' => 'الإدارة',
         'Store' => 'المتجر',
         'control_panel' => 'لوحة التحكم',
+        'mobile_application' => 'تطبيق الموبايل',
     ],
     'plural_model_labels' => [
         'admins' => 'المديرين',
@@ -29,6 +30,7 @@ return [
 
     'settings' => [
         'platform_settings' => 'إعدادات المنصة',
+        'onboarding_settings' => 'إعدادات شاشات الترحيب',
     ],
 
     'locales' => [
