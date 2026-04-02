@@ -22,12 +22,11 @@ return new class extends Migration {
             $table->foreignId('address_id')->constrained('addresses');
             $table->json('address_data');
 
-            $table->foreignId('store_id')->constrained('stores');
+            $table->foreignId('branch_id')->constrained('branches');
 
-            $table->double('total');
             $table->double('total_items_amount');
             $table->double('delivery_amount')->default(0);
-            $table->double('tax_amount')->default(0);
+            $table->double('total');
 
             $table->text('notes')->nullable();
             $table->timestamps();

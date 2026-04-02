@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      * Aligns order_items with options/additions, total_price, soft deletes and timestamps.
@@ -46,11 +45,17 @@ return new class extends Migration
     public function down(): void
     {
         $columnsToDrop = [
-            'options_amount', 'options_data', 'additions_amount', 'additions_data',
-            'total_price', 'deleted_at', 'created_at', 'updated_at',
+            'options_amount',
+            'options_data',
+            'additions_amount',
+            'additions_data',
+            'total_price',
+            'deleted_at',
+            'created_at',
+            'updated_at',
         ];
         Schema::table('order_items', function (Blueprint $table) use ($columnsToDrop) {
-            $existing = array_filter($columnsToDrop, fn ($col) => Schema::hasColumn('order_items', $col));
+            $existing = array_filter($columnsToDrop, fn($col) => Schema::hasColumn('order_items', $col));
             if (!empty($existing)) {
                 $table->dropColumn($existing);
             }

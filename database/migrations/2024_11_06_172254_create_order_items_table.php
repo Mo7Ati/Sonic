@@ -13,10 +13,20 @@ return new class extends Migration {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
+
             $table->foreignId('product_id')->nullable()->constrained('products')->nullOnDelete();
-            $table->unsignedSmallInteger('quantity')->default(1);
-            $table->float('unit_price');
             $table->json('product_data');
+
+            $table->float('options_amount')->default(0);
+            $table->json('options_data')->nullable();
+
+            $table->float('additions_amount')->default(0);
+            $table->json('additions_data')->nullable();
+
+            $table->float('unit_price');
+            $table->unsignedSmallInteger('quantity')->default(1);
+
+            $table->softDeletes();
             $table->unique(['order_id', 'product_id']);
         });
     }
