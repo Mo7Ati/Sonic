@@ -2,56 +2,75 @@
 
 namespace App\Models;
 
-use App\Enums\HomePageSectionsType;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\SectionEnum;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Translatable\HasTranslations;
 
+#[Fillable(['title', 'description', 'type', 'group_id', 'data', 'is_active', 'ordered'])]
 class Section extends Model
 {
-    use HasFactory, HasTranslations;
+    use SoftDeletes, HasTranslations;
 
-    protected $fillable = [
-        'type',
-        'is_active',
-        'order',
-        'data',
-    ];
-
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
-        'type' => HomePageSectionsType::class,
-        'is_active' => 'boolean',
-        'order' => 'integer',
+        'title' => 'array',
+        'description' => 'array',
         'data' => 'array',
+        'is_active' => 'boolean',
+        'type' => SectionEnum::class,
     ];
 
-    protected static function booted()
+    public $translatable = ['title', 'description'];
+
+    protected static function boot()
     {
-        static::addGlobalScope('ordered', function (Builder $builder) {
-            $builder->orderBy('order');
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->ordered = Section::max('ordered') + 1;
         });
     }
 
-    public function scopeActive(Builder $query, $value = true): Builder
+    /**
+     * Get the group that owns the section.
+     */
+    public function group()
     {
-        return $query->where('is_active', $value);
-    }
-    public function scopeOrdered(Builder $query): Builder
-    {
-        return $query->orderBy('order');
-    }
-    public function scopeType($query, $type)
-    {
-        return $query->where('type', $type);
+        return $this->belongsTo(Group::class);
     }
 
-    public function scopeApplyFilters($query, Request $request)
+    /**
+     * Get the section items that belong to this section.
+     */
+    public function items()
     {
-        return $query
-            ->when($request->input('type'), fn($q, $type) => $q->type($type))
-            ->when($request->filled('is_active'), fn($q) => $q->active($request->input('is_active')))
-            ->orderBy($request->input('sort', 'id'), $request->input('direction', 'desc'));
+        return $this->hasMany(SectionItem::class);
+    }
+
+    /**
+     * Scope a query to only include sections for a specific group.
+     */
+    public function scopeForGroup($query, $groupId)
+    {
+        return $query->where('group_id', $groupId);
+    }
+
+    /**
+     * Scope a query to only include sections without a group.
+     */
+    public function scopeWithoutGroup($query)
+    {
+        return $query->whereNull('group_id');
+    }
+
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('ordered');
     }
 }

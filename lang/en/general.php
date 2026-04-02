@@ -5,6 +5,7 @@ return [
         'admins' => 'Admins',
         'store_categories' => 'Store categories',
         'stores' => 'Stores',
+        'sections' => 'Homepage Sections',
     ],
     'navigation_groups' => [
         'Management' => 'Management',
@@ -14,11 +15,13 @@ return [
         'admins' => 'Admins',
         'store_categories' => 'Store categories',
         'stores' => 'Stores',
+        'sections' => 'Homepage Sections',
     ],
     'model_labels' => [
         'admin' => 'Admin',
         'store_category' => 'Store category',
         'store' => 'Store',
+        'section' => 'Section',
     ],
     'locales' => [
         'ar' => 'Arabic',

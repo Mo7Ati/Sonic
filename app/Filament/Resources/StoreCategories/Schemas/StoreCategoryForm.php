@@ -37,6 +37,7 @@ class StoreCategoryForm
                             ->image()
                             ->collection('store_categories_images')
                             ->visibility('public')
+                            ->preserveFilenames()
                             ->columnSpanFull(),
                     ])
                     ->columnSpanFull(),

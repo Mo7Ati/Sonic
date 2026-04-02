@@ -61,8 +61,8 @@ class AdminPanelProvider extends PanelProvider
                 FilamentShieldPlugin::make(),
                 FilamentLanguageSwitcherPlugin::make()
                     ->locales([
-                        ['code' => 'en', 'name' => 'English', 'flag' => 'us'],
                         ['code' => 'ar', 'name' => 'Arabic', 'flag' => 'ps'],
+                        ['code' => 'en', 'name' => 'English', 'flag' => 'us'],
                     ])
                     ->rememberLocale(days: 365)
                     ->showOnAuthPages(),

@@ -107,6 +107,7 @@ class StoreForm
                                             ->label(__('forms.common.image'))
                                             ->image()
                                             ->collection('store_images')
+                                            ->preserveFilenames()
                                             ->visibility('public'),
 
                                         Toggle::make('is_active')

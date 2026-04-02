@@ -3,6 +3,7 @@
 return [
     'common' => [
         'name' => 'الاسم',
+        'title' => 'العنوان',
         'description' => 'الوصف',
         'image' => 'الصورة',
         'email' => 'البريد الإلكتروني',
@@ -30,5 +31,41 @@ return [
         'store_details' => 'تفاصيل المتجر',
         'category' => 'التصنيف',
         'contact_and_security' => 'التواصل والأمان',
+    ],
+    'section' => [
+        'setting' => 'الإعدادات',
+        'type_details' => 'تفاصيل القسم',
+        'type' => 'النوع',
+        'store_categories' => 'التصنيفات',
+        'group' => 'المجموعة',
+        'store' => 'المتجر',
+        'section_item_external_link' => 'رابط خارجي',
+        'text_color' => 'لون النص',
+        'background_color' => 'لون الخلفية',
+        'section_item_type' => 'نوع العنصر',
+        'section_item_image' => 'صورة العنصر',
+
+        'types' => [
+            'main_banners' => 'بانرات رئيسية',
+            'square_banners' => 'بانرات مربعة',
+            'rectangle_banners' => 'بانرات مستطيلة',
+            'store_categories' => 'تصنيفات المتجر',
+            'written_banner' => 'بانر مكتوب',
+            'list_items' => 'عناصر قائمة',
+            'active_orders' => 'طلبات مفعلة',
+            'un_paid_orders' => 'طلبات غير مدفوعة',
+            'search' => 'بحث',
+        ],
+    ],
+
+    'section_item' => [
+        'store_category' => 'التصنيف',
+
+        'types' => [
+            'group' => 'مجموعة',
+            'store' => 'متجر',
+            'store_category' => 'تصنيف',
+            'external_link' => 'رابط خارجي',
+        ],
     ],
 ];

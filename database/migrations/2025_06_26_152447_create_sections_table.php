@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -12,10 +13,14 @@ return new class extends Migration {
     {
         Schema::create('sections', function (Blueprint $table) {
             $table->id();
-            $table->string('type')->index();
-            $table->boolean('is_active')->default(true);
-            $table->integer('order')->default(0);
-            $table->json('data');
+            $table->json('title');
+            $table->json('description')->nullable();
+            $table->string('type');
+            $table->foreignId('group_id')->nullable()->constrained('groups');
+            $table->json('data')->nullable();
+            $table->boolean('is_active')->default(false);
+            $table->integer('ordered')->default(0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
