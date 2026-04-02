@@ -35,4 +35,8 @@ return [
         'quantity' => 'Quantity',
         'accepted' => 'Accepted',
     ],
+    'categories' => [
+        'slug' => 'Slug',
+        'products_count' => 'Products',
+    ],
 ];

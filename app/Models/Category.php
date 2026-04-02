@@ -3,17 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
+
 class Category extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasTranslations;
+    use HasFactory, HasTranslations, InteractsWithMedia, SoftDeletes;
+
     protected $fillable = [
         'name',
         'slug',
@@ -22,10 +24,10 @@ class Category extends Model implements HasMedia
         'is_active',
     ];
 
-
     protected $casts = [
         'name' => 'array',
         'description' => 'array',
+        'is_active' => 'boolean',
     ];
 
     public array $translatable = ['name', 'description'];
@@ -43,6 +45,7 @@ class Category extends Model implements HasMedia
             }
         });
     }
+
     public function products()
     {
         return $this->hasMany(Product::class, 'category_id', 'id');
@@ -51,8 +54,8 @@ class Category extends Model implements HasMedia
     public function scopeApplyFilters(Builder $query, Request $request)
     {
         return $query
-            ->when($request->filled('is_active'), fn($q) => $q->active($request->input('is_active')))
-            ->when($request->input('search'), fn($q, $search) => $q->search($search))
+            ->when($request->filled('is_active'), fn ($q) => $q->active($request->input('is_active')))
+            ->when($request->input('search'), fn ($q, $search) => $q->search($search))
             ->orderBy($request->input('sort', 'id'), $request->input('direction', 'desc'));
     }
 
@@ -62,6 +65,7 @@ class Category extends Model implements HasMedia
             ->where('name', 'LIKE', "%{$search}%")
             ->orWhere('description', 'LIKE', "%{$search}%");
     }
+
     public function scopeActive($query, $value = true)
     {
         return $query->where('is_active', $value);

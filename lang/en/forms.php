@@ -69,6 +69,12 @@ return [
         'accepted' => 'Accepted',
         'accepted_helper' => 'When on, the product is approved for sale (subject to platform rules).',
     ],
+    'categories' => [
+        'content' => 'Category details',
+        'content_description' => 'Name and description for grouping products in your catalog.',
+        'visibility' => 'Visibility',
+        'visibility_description' => 'Control whether this category is available when organizing products.',
+    ],
     'section' => [
         'setting' => 'Settings',
         'type_details' => 'Section Details',

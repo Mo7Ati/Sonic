@@ -35,4 +35,8 @@ return [
         'quantity' => 'الكمية',
         'accepted' => 'مقبول',
     ],
+    'categories' => [
+        'slug' => 'المعرّف',
+        'products_count' => 'المنتجات',
+    ],
 ];

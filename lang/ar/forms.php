@@ -69,6 +69,12 @@ return [
         'accepted' => 'مقبول',
         'accepted_helper' => 'عند التفعيل يُعتبر المنتج معتمداً للبيع (حسب قواعد المنصة).',
     ],
+    'categories' => [
+        'content' => 'تفاصيل التصنيف',
+        'content_description' => 'الاسم والوصف لتجميع المنتجات في كتالوج متجرك.',
+        'visibility' => 'الظهور',
+        'visibility_description' => 'التصنيفات غير النشطة تبقى مخفية عن العملاء.',
+    ],
     'section' => [
         'setting' => 'الإعدادات',
         'type_details' => 'تفاصيل القسم',

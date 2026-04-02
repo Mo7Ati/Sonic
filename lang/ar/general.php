@@ -10,6 +10,7 @@ return [
         'branches' => 'الفروع',
         'cashiers' => 'أمناء الصندوق',
         'products' => 'المنتجات',
+        'categories' => 'التصنيفات',
     ],
     'navigation_groups' => [
         'Management' => 'الإدارة',
@@ -26,6 +27,7 @@ return [
         'branches' => 'الفروع',
         'cashiers' => 'أمناء الصندوق',
         'products' => 'المنتجات',
+        'categories' => 'التصنيفات',
     ],
 
     'model_labels' => [
@@ -36,6 +38,7 @@ return [
         'branch' => 'فرع',
         'cashier' => 'أمين صندوق',
         'product' => 'منتج',
+        'category' => 'تصنيف',
     ],
 
     'settings' => [
