@@ -7,6 +7,7 @@ return [
         'address' => 'العنوان',
         'image' => 'الصورة',
         'email' => 'البريد الإلكتروني',
+        'phone' => 'الهاتف',
         'is_active' => 'نشط',
         'all' => 'الكل',
         'created_at' => 'تاريخ الإنشاء',
@@ -25,5 +26,8 @@ return [
     ],
     'branches' => [
         'status' => 'حالة الفرع',
+    ],
+    'cashiers' => [
+        'branch' => 'الفرع',
     ],
 ];

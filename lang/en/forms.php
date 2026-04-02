@@ -54,6 +54,11 @@ return [
         'delivery_area_polygon' => 'Delivery area (JSON)',
         'delivery_area_polygon_helper' => 'Optional. Valid JSON array (e.g. list of lat/lng points). Leave empty if you do not use polygon delivery zones.',
     ],
+    'cashiers' => [
+        'general_information' => 'Cashier details',
+        'general_information_description' => 'Login credentials and branch assignment for this cashier.',
+        'branch' => 'Branch',
+    ],
     'section' => [
         'setting' => 'Settings',
         'type_details' => 'Section Details',

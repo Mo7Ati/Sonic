@@ -8,6 +8,7 @@ return [
         'sections' => 'أقسام الصفحة الرئيسية',
         'settings' => 'إعدادات عامة',
         'branches' => 'الفروع',
+        'cashiers' => 'أمناء الصندوق',
     ],
     'navigation_groups' => [
         'Management' => 'الإدارة',
@@ -22,6 +23,7 @@ return [
         'stores' => 'المتاجر',
         'sections' => 'أقسام الصفحة الرئيسية',
         'branches' => 'الفروع',
+        'cashiers' => 'أمناء الصندوق',
     ],
 
     'model_labels' => [
@@ -30,6 +32,7 @@ return [
         'store' => 'متجر',
         'section' => 'قسم',
         'branch' => 'فرع',
+        'cashier' => 'أمين صندوق',
     ],
 
     'settings' => [

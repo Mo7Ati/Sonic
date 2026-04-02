@@ -54,6 +54,11 @@ return [
         'delivery_area_polygon' => 'منطقة التوصيل (JSON)',
         'delivery_area_polygon_helper' => 'اختياري. مصفوفة JSON صالحة (مثل قائمة نقاط خط العرض/الطول). اتركها فارغة إذا لا تستخدم مضلعات للتوصيل.',
     ],
+    'cashiers' => [
+        'general_information' => 'بيانات أمين الصندوق',
+        'general_information_description' => 'بيانات الدخول وربط الفرع لأمين الصندوق.',
+        'branch' => 'الفرع',
+    ],
     'section' => [
         'setting' => 'الإعدادات',
         'type_details' => 'تفاصيل القسم',

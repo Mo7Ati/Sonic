@@ -8,6 +8,7 @@ return [
         'sections' => 'Homepage Sections',
         'settings' => 'Settings',
         'branches' => 'Branches',
+        'cashiers' => 'Cashiers',
     ],
     'navigation_groups' => [
         'Management' => 'Management',
@@ -22,6 +23,7 @@ return [
         'stores' => 'Stores',
         'sections' => 'Homepage Sections',
         'branches' => 'Branches',
+        'cashiers' => 'Cashiers',
     ],
     'model_labels' => [
         'admin' => 'Admin',
@@ -29,6 +31,7 @@ return [
         'store' => 'Store',
         'section' => 'Section',
         'branch' => 'Branch',
+        'cashier' => 'Cashier',
     ],
     'settings' => [
         'platform_settings' => 'Platform Settings',

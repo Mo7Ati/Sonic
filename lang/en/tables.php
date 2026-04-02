@@ -7,6 +7,7 @@ return [
         'address' => 'Address',
         'image' => 'Image',
         'email' => 'Email',
+        'phone' => 'Phone',
         'is_active' => 'Active',
         'all' => 'All',
         'created_at' => 'Created At',
@@ -25,5 +26,8 @@ return [
     ],
     'branches' => [
         'status' => 'Branch Status',
+    ],
+    'cashiers' => [
+        'branch' => 'Branch',
     ],
 ];
