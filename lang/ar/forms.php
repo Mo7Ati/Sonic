@@ -75,6 +75,18 @@ return [
         'visibility' => 'الظهور',
         'visibility_description' => 'التصنيفات غير النشطة تبقى مخفية عن العملاء.',
     ],
+    'additions' => [
+        'content' => 'تفاصيل الإضافة',
+        'content_description' => 'الاسم الظاهر للعملاء عند إضافة إضافات للمنتج.',
+        'visibility' => 'الظهور',
+        'visibility_description' => 'الإضافات غير النشطة تبقى مخفية عن العملاء.',
+    ],
+    'options' => [
+        'content' => 'تفاصيل الخيار',
+        'content_description' => 'اسم مجموعة التنويع (مثل الحجم أو مستوى التوابل).',
+        'visibility' => 'الظهور',
+        'visibility_description' => 'الخيارات غير النشطة تبقى مخفية عن العملاء.',
+    ],
     'section' => [
         'setting' => 'الإعدادات',
         'type_details' => 'تفاصيل القسم',

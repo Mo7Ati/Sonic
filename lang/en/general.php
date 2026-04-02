@@ -11,6 +11,8 @@ return [
         'cashiers' => 'Cashiers',
         'products' => 'Products',
         'categories' => 'Categories',
+        'additions' => 'Additions',
+        'options' => 'Options',
     ],
     'navigation_groups' => [
         'Management' => 'Management',
@@ -28,6 +30,8 @@ return [
         'cashiers' => 'Cashiers',
         'products' => 'Products',
         'categories' => 'Categories',
+        'additions' => 'Additions',
+        'options' => 'Options',
     ],
     'model_labels' => [
         'admin' => 'Admin',
@@ -38,6 +42,8 @@ return [
         'cashier' => 'Cashier',
         'product' => 'Product',
         'category' => 'Category',
+        'addition' => 'Addition',
+        'option' => 'Option',
     ],
     'settings' => [
         'platform_settings' => 'Platform Settings',

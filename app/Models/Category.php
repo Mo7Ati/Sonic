@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,17 +13,10 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
 
+#[Fillable(['name', 'slug', 'store_id', 'description', 'is_active'])]
 class Category extends Model implements HasMedia
 {
     use HasFactory, HasTranslations, InteractsWithMedia, SoftDeletes;
-
-    protected $fillable = [
-        'name',
-        'slug',
-        'store_id',
-        'description',
-        'is_active',
-    ];
 
     protected $casts = [
         'name' => 'array',

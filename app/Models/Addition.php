@@ -2,19 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Spatie\Translatable\HasTranslations;
 
+#[Fillable(['name', 'store_id', 'is_active'])]
 class Addition extends Model
 {
-    use HasTranslations;
-
-    protected $fillable = [
-        'name',
-        'store_id',
-        'is_active',
-    ];
+    use HasTranslations, SoftDeletes;
 
     protected $casts = [
         'name' => 'array',
@@ -44,6 +41,7 @@ class Addition extends Model
     {
         return $query->where('name', 'LIKE', "%{$search}%");
     }
+
     public function scopeActive($query, $value = true)
     {
         return $query->where('is_active', $value);
@@ -52,8 +50,8 @@ class Addition extends Model
     public function scopeApplyFilters($query, Request $request)
     {
         return $query
-            ->when($request->input('search'), fn($q, $search) => $q->search($search))
-            ->when($request->filled('is_active'), fn($q) => $q->active($request->input('is_active')))
+            ->when($request->input('search'), fn ($q, $search) => $q->search($search))
+            ->when($request->filled('is_active'), fn ($q) => $q->active($request->input('is_active')))
             ->orderBy($request->input('sort', 'id'), $request->input('direction', 'desc'));
     }
 }

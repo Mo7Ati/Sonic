@@ -75,6 +75,18 @@ return [
         'visibility' => 'Visibility',
         'visibility_description' => 'Control whether this category is available when organizing products.',
     ],
+    'additions' => [
+        'content' => 'Addition details',
+        'content_description' => 'Name shown when customers add extras to a product.',
+        'visibility' => 'Visibility',
+        'visibility_description' => 'Inactive additions are hidden from customers.',
+    ],
+    'options' => [
+        'content' => 'Option details',
+        'content_description' => 'Name for a variant group (e.g. size, spice level).',
+        'visibility' => 'Visibility',
+        'visibility_description' => 'Inactive options are hidden from customers.',
+    ],
     'section' => [
         'setting' => 'Settings',
         'type_details' => 'Section Details',

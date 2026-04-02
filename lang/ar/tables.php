@@ -37,6 +37,12 @@ return [
     ],
     'categories' => [
         'slug' => 'المعرّف',
-        'products_count' => 'المنتجات',
+        'products_count' => 'عدد المنتجات',
+    ],
+    'additions' => [
+        'products_count' => 'عدد المنتجات',
+    ],
+    'options' => [
+        'products_count' => 'عدد المنتجات',
     ],
 ];

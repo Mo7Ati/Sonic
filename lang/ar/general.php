@@ -11,6 +11,8 @@ return [
         'cashiers' => 'أمناء الصندوق',
         'products' => 'المنتجات',
         'categories' => 'التصنيفات',
+        'additions' => 'الإضافات',
+        'options' => 'الخيارات',
     ],
     'navigation_groups' => [
         'Management' => 'الإدارة',
@@ -28,6 +30,8 @@ return [
         'cashiers' => 'أمناء الصندوق',
         'products' => 'المنتجات',
         'categories' => 'التصنيفات',
+        'additions' => 'الإضافات',
+        'options' => 'الخيارات',
     ],
 
     'model_labels' => [
@@ -39,6 +43,8 @@ return [
         'cashier' => 'أمين صندوق',
         'product' => 'منتج',
         'category' => 'تصنيف',
+        'addition' => 'إضافة',
+        'option' => 'خيار',
     ],
 
     'settings' => [

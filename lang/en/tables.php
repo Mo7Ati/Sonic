@@ -37,6 +37,12 @@ return [
     ],
     'categories' => [
         'slug' => 'Slug',
-        'products_count' => 'Products',
+        'products_count' => 'Products Count',
+    ],
+    'additions' => [
+        'products_count' => 'Products Count',
+    ],
+    'options' => [
+        'products_count' => 'Products Count',
     ],
 ];
