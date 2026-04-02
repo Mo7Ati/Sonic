@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Admin;
+use App\Models\Store;
 use App\Models\User;
 
 return [
@@ -48,6 +49,11 @@ return [
             'driver' => 'session',
             'provider' => 'admins',
         ],
+
+        'store' => [
+            'driver' => 'session',
+            'provider' => 'stores',
+        ],
     ],
 
     /*
@@ -76,6 +82,11 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => Admin::class,
+        ],
+
+        'stores' => [
+            'driver' => 'eloquent',
+            'model' => Store::class,
         ],
 
         // 'users' => [
@@ -113,6 +124,13 @@ return [
 
         'admins' => [
             'provider' => 'admins',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'stores' => [
+            'provider' => 'stores',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,

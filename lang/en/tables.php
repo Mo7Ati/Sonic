@@ -4,6 +4,7 @@ return [
     'common' => [
         'name' => 'Name',
         'description' => 'Description',
+        'address' => 'Address',
         'image' => 'Image',
         'email' => 'Email',
         'is_active' => 'Active',
@@ -21,5 +22,8 @@ return [
     ],
     'stores' => [
         'category' => 'Category',
+    ],
+    'branches' => [
+        'status' => 'Branch Status',
     ],
 ];

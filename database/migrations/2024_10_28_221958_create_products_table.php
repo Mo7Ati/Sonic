@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -22,13 +23,13 @@ return new class extends Migration {
             $table->foreignId('store_id')->constrained('stores')->cascadeOnDelete();
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
 
-            $table->double('price');
-            $table->double('compare_price')->nullable();
+            // $table->double('price');
+            // $table->double('compare_price')->nullable();
 
             $table->boolean('is_active')->default(true);
             $table->boolean('is_accepted')->default(false);
 
-            $table->unsignedSmallInteger('quantity')->default(0);
+            $table->unsignedSmallInteger('quantity')->nullable();
 
             $table->unique(['store_id', 'slug']);
 

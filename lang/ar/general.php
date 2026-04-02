@@ -7,18 +7,21 @@ return [
         'stores' => 'المتاجر',
         'sections' => 'أقسام الصفحة الرئيسية',
         'settings' => 'إعدادات عامة',
+        'branches' => 'الفروع',
     ],
     'navigation_groups' => [
         'Management' => 'الإدارة',
         'Store' => 'المتجر',
         'control_panel' => 'لوحة التحكم',
         'mobile_application' => 'تطبيق الموبايل',
+        'store_management' => 'إدارة المتجر',
     ],
     'plural_model_labels' => [
         'admins' => 'المديرين',
         'store_categories' => 'تصنيفات المتاجر',
         'stores' => 'المتاجر',
         'sections' => 'أقسام الصفحة الرئيسية',
+        'branches' => 'الفروع',
     ],
 
     'model_labels' => [
@@ -26,6 +29,7 @@ return [
         'store_category' => 'تصنيف متجر',
         'store' => 'متجر',
         'section' => 'قسم',
+        'branch' => 'فرع',
     ],
 
     'settings' => [

@@ -4,6 +4,7 @@ return [
     'common' => [
         'name' => 'الاسم',
         'description' => 'الوصف',
+        'address' => 'العنوان',
         'image' => 'الصورة',
         'email' => 'البريد الإلكتروني',
         'is_active' => 'نشط',
@@ -21,5 +22,8 @@ return [
     ],
     'stores' => [
         'category' => 'التصنيف',
+    ],
+    'branches' => [
+        'status' => 'حالة الفرع',
     ],
 ];
