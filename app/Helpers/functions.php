@@ -14,11 +14,12 @@ function getPanel()
             return $panel->value;
         }
     }
+
     return null;
 }
 function isAdminPanel(): bool
 {
-    return request()->is([PanelsEnum::ADMIN->value, PanelsEnum::ADMIN->value . '/*']);
+    return request()->is([PanelsEnum::ADMIN->value, PanelsEnum::ADMIN->value.'/*']);
 }
 
 function successResponse($data, $message = 'Success', $status = 200, $extra = null)
@@ -34,8 +35,10 @@ function successResponse($data, $message = 'Success', $status = 200, $extra = nu
 function errorResponse($message = 'Error', $status = 400)
 {
     return response()->json([
-        'success' => false,
         'message' => $message,
+        'status' => false,
+        'data' => null,
+        'error_code' => $status,
     ], $status);
 }
 

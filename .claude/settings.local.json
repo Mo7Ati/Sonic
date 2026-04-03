@@ -3,7 +3,10 @@
     "allow": [
       "Bash(xargs grep:*)",
       "mcp__laravel-boost__database-schema",
-      "Bash(grep -r \"laravel/socialite\" /c/Projects/Sonic/Sonic/composer*)"
+      "Bash(grep -r \"laravel/socialite\" /c/Projects/Sonic/Sonic/composer*)",
+      "mcp__laravel-boost__search-docs",
+      "Bash(php artisan:*)",
+      "Bash(vendor/bin/pint --dirty --format agent)"
     ]
   },
   "enableAllProjectMcpServers": true,
