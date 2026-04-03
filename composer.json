@@ -18,7 +18,9 @@
         "filament/spatie-laravel-media-library-plugin": "*",
         "filament/spatie-laravel-settings-plugin": "*",
         "laravel/framework": "^13.0",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
+        "nwidart/laravel-modules": "^13.0",
         "spatie/laravel-translatable": "^6.13"
     },
     "require-dev": {
@@ -35,7 +37,10 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+            "Modules\\Customer\\": "Modules/Customer/app/",
+            "Modules\\Customer\\Database\\Factories\\": "Modules/Customer/database/factories/",
+            "Modules\\Customer\\Database\\Seeders\\": "Modules/Customer/database/seeders/"
         }
     },
     "autoload-dev": {
@@ -92,7 +97,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "wikimedia/composer-merge-plugin": true
         }
     },
     "minimum-stability": "stable",
