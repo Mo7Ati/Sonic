@@ -59,4 +59,7 @@ return [
         'ar' => 'العربية',
         'en' => 'الإنجليزية',
     ],
+    'relation_managers' => [
+        'store_category_children' => 'التصنيفات الفرعية',
+    ],
 ];

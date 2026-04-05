@@ -56,4 +56,7 @@ return [
         'ar' => 'Arabic',
         'en' => 'English',
     ],
+    'relation_managers' => [
+        'store_category_children' => 'Subcategories',
+    ],
 ];

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\StoreCategories;
 use App\Filament\Resources\StoreCategories\Pages\CreateStoreCategory;
 use App\Filament\Resources\StoreCategories\Pages\EditStoreCategory;
 use App\Filament\Resources\StoreCategories\Pages\ListStoreCategories;
+use App\Filament\Resources\StoreCategories\RelationManagers\ChildrenRelationManager;
 use App\Filament\Resources\StoreCategories\Schemas\StoreCategoryForm;
 use App\Filament\Resources\StoreCategories\Tables\StoreCategoriesTable;
 use App\Models\StoreCategory;
@@ -35,7 +36,7 @@ class StoreCategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ChildrenRelationManager::class,
         ];
     }
 

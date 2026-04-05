@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -12,7 +15,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
 
-#[Fillable(['name', 'slug', 'description'])]
+#[Fillable(['name', 'slug', 'description', 'parent_id'])]
 
 class StoreCategory extends Model implements HasMedia
 {
@@ -25,22 +28,85 @@ class StoreCategory extends Model implements HasMedia
 
     public array $translatable = ['name', 'description'];
 
-    protected static function booted()
+    protected static function booted(): void
     {
-        static::creating(function ($model) {
-            $model->slug = Str::slug($model->getTranslation('name', 'en'));
+        static::creating(function (StoreCategory $model): void {
+            $model->assignUniqueSlug();
         });
 
-        static::updating(function ($model) {
-            if ($model->isDirty('name')) {
-                $model->slug = Str::slug($model->getTranslation('name', 'en'));
+        static::updating(function (StoreCategory $model): void {
+            if ($model->isDirty(['name', 'parent_id'])) {
+                $model->assignUniqueSlug();
             }
         });
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(self::class, 'parent_id');
     }
 
     public function stores()
     {
         return $this->hasMany(Store::class, 'category_id', 'id');
+    }
+
+    /**
+     * @param  Builder<StoreCategory>  $query
+     * @return Builder<StoreCategory>
+     */
+    public function scopeRoots(Builder $query): Builder
+    {
+        return $query->whereNull('parent_id');
+    }
+
+    public function assignUniqueSlug(): void
+    {
+        $base = $this->computeSlugBase();
+        $slug = $base;
+        $suffix = 1;
+
+        while ($this->slugExists($slug)) {
+            $slug = "{$base}-{$suffix}";
+            $suffix++;
+        }
+
+        $this->slug = $slug;
+    }
+
+    protected function computeSlugBase(): string
+    {
+        $nameSlug = Str::slug($this->getTranslation('name', 'en'));
+
+        if ($this->parent_id === null) {
+            return $nameSlug;
+        }
+
+        $parent = $this->relationLoaded('parent')
+            ? $this->parent
+            : static::query()->find($this->parent_id);
+
+        if ($parent === null) {
+            return $nameSlug;
+        }
+
+        return Str::slug("{$parent->slug}-{$nameSlug}");
+    }
+
+    protected function slugExists(string $slug): bool
+    {
+        $query = static::query()->where('slug', $slug);
+
+        if ($this->exists) {
+            $query->whereKeyNot($this->getKey());
+        }
+
+        return $query->exists();
     }
 
     public function scopeSearch($query, $search)
@@ -52,7 +118,7 @@ class StoreCategory extends Model implements HasMedia
     public function scopeApplyFilters($query, Request $request)
     {
         return $query
-            ->when($request->input('search'), fn($q, $search) => $q->search($search))
+            ->when($request->input('search'), fn ($q, $search) => $q->search($search))
             ->orderBy($request->input('sort', 'id'), $request->input('direction', 'desc'));
     }
 }
