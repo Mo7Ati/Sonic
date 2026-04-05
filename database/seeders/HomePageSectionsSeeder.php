@@ -275,6 +275,13 @@ class HomePageSectionsSeeder extends Seeder
                 ->toMediaCollection('store_images');
         }
 
+        if ($store->getMedia('store_cover_images')->isEmpty()) {
+            $store->addMedia($imagePath)
+                ->preservingOriginal()
+                ->usingFileName('seed-store-cover-'.Str::random(6).'.jpg')
+                ->toMediaCollection('store_cover_images');
+        }
+
         return $store;
     }
 

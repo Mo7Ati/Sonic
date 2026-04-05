@@ -27,6 +27,9 @@ return [
     'stores' => [
         'general_information' => 'المعلومات العامة',
         'general_information_description' => 'أدخل المعلومات العامة للمتجر.',
+        'logo' => 'الشعار',
+        'cover_image' => 'صورة الغلاف',
+        'cover_image_helper' => 'صورة عريضة تُعرض في ملف المتجر (اختياري).',
         'keywords' => 'الكلمات المفتاحية',
         'platform' => 'المنصة',
         'link' => 'الرابط',
@@ -86,6 +89,11 @@ return [
         'content_description' => 'اسم مجموعة التنويع (مثل الحجم أو مستوى التوابل).',
         'visibility' => 'الظهور',
         'visibility_description' => 'الخيارات غير النشطة تبقى مخفية عن العملاء.',
+    ],
+    'groups' => [
+        'heading' => 'تفاصيل المجموعة',
+        'description' => 'اسم المجموعة والمتاجر التابعة لها (تُستخدم في أقسام القوائم في الصفحة الرئيسية).',
+        'stores' => 'المتاجر',
     ],
     'section' => [
         'setting' => 'الإعدادات',

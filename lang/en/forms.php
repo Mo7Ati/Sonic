@@ -27,6 +27,9 @@ return [
     'stores' => [
         'general_information' => 'General Information',
         'general_information_description' => 'Enter the general information for the store.',
+        'logo' => 'Logo',
+        'cover_image' => 'Cover image',
+        'cover_image_helper' => 'Wide banner-style image shown on the store profile (optional).',
         'keywords' => 'Keywords',
         'platform' => 'Platform',
         'link' => 'Link',
@@ -86,6 +89,11 @@ return [
         'content_description' => 'Name for a variant group (e.g. size, spice level).',
         'visibility' => 'Visibility',
         'visibility_description' => 'Inactive options are hidden from customers.',
+    ],
+    'groups' => [
+        'heading' => 'Group details',
+        'description' => 'Name this group and choose which stores belong to it (used for homepage list sections).',
+        'stores' => 'Stores',
     ],
     'section' => [
         'setting' => 'Settings',

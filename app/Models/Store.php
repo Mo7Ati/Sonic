@@ -114,6 +114,17 @@ class Store extends Authenticatable implements HasMedia, Wallet
         return $query->where('is_active', $value);
     }
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('store_images')
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+            ->singleFile();
+
+        $this->addMediaCollection('store_cover_images')
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+            ->singleFile();
+    }
+
     /**
      * Apply filters to the query (scope – call as applyFilters($request)).
      *

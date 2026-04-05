@@ -23,6 +23,11 @@ return [
     ],
     'stores' => [
         'category' => 'Category',
+        'logo' => 'Logo',
+        'cover_image' => 'Cover',
+    ],
+    'groups' => [
+        'stores_count' => 'Store count',
     ],
     'branches' => [
         'status' => 'Branch Status',

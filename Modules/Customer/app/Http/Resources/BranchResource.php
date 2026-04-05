@@ -31,11 +31,12 @@ class BranchResource extends JsonResource
             'status' => $this->status?->value,
             'store' => $this->when(
                 $this->relationLoaded('store'),
-                fn(): array => [
+                fn (): array => [
                     'id' => $this->store->id,
                     'name' => $this->store->name,
                     'slug' => $this->store->slug,
-                    'logo' => $this->store->getMedia('store_images')?->first()?->getUrl(),
+                    'logo' => $this->store->getFirstMediaUrl('store_images') ?: null,
+                    'cover_image' => $this->store->getFirstMediaUrl('store_cover_images') ?: null,
                 ],
             ),
         ];

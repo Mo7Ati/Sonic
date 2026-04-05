@@ -23,6 +23,11 @@ return [
     ],
     'stores' => [
         'category' => 'التصنيف',
+        'logo' => 'الشعار',
+        'cover_image' => 'الغلاف',
+    ],
+    'groups' => [
+        'stores_count' => 'عدد المتاجر',
     ],
     'branches' => [
         'status' => 'حالة الفرع',

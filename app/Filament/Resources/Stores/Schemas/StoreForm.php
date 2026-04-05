@@ -36,7 +36,7 @@ class StoreForm
                                             ->rows(3)
                                             ->columnSpanFull(),
                                         TagsInput::make('keywords')
-                                            ->label(__('forms.common.keywords'))
+                                            ->label(__('forms.common.keywords')),
                                     ]),
 
                                 Section::make(__('forms.common.social_media'))
@@ -62,11 +62,9 @@ class StoreForm
                                             ])
                                             ->defaultItems(0)
                                             ->columns(2),
-                                    ])
+                                    ]),
                             ])
                             ->columnSpan(2),
-
-
 
                         Grid::make(1)
                             ->columnSpan(1)
@@ -83,9 +81,9 @@ class StoreForm
                                             ->label(__('forms.common.password'))
                                             ->password()
                                             ->revealable()
-                                            ->required(fn(string $operation): bool => $operation === 'create')
-                                            ->dehydrated(fn(?string $state): bool => filled($state))
-                                            ->helperText(fn(string $operation): ?string => $operation === 'edit' ? __('forms.common.leave_blank_to_keep_current_password') : null),
+                                            ->required(fn (string $operation): bool => $operation === 'create')
+                                            ->dehydrated(fn (?string $state): bool => filled($state))
+                                            ->helperText(fn (string $operation): ?string => $operation === 'edit' ? __('forms.common.leave_blank_to_keep_current_password') : null),
 
                                         TextInput::make('phone')
                                             ->label(__('forms.common.phone'))
@@ -102,13 +100,22 @@ class StoreForm
                                             ->preload()
                                             ->searchable(),
 
-                                        SpatieMediaLibraryFileUpload::make('image')
+                                        SpatieMediaLibraryFileUpload::make('logo')
                                             ->disk('public')
-                                            ->label(__('forms.common.image'))
+                                            ->label(__('forms.stores.logo'))
                                             ->image()
                                             ->collection('store_images')
                                             ->preserveFilenames()
                                             ->visibility('public'),
+
+                                        SpatieMediaLibraryFileUpload::make('cover_image')
+                                            ->disk('public')
+                                            ->label(__('forms.stores.cover_image'))
+                                            ->image()
+                                            ->collection('store_cover_images')
+                                            ->preserveFilenames()
+                                            ->visibility('public')
+                                            ->helperText(__('forms.stores.cover_image_helper')),
 
                                         Toggle::make('is_active')
                                             ->label(__('forms.common.is_active'))

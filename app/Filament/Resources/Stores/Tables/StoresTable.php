@@ -8,13 +8,11 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class StoresTable
@@ -23,11 +21,16 @@ class StoresTable
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('image')
+                SpatieMediaLibraryImageColumn::make('logo')
                     ->circular()
-                    ->label(__('tables.common.image'))
+                    ->label(__('tables.stores.logo'))
                     ->collection('store_images')
                     ->toggleable(),
+
+                SpatieMediaLibraryImageColumn::make('cover_image')
+                    ->label(__('tables.stores.cover_image'))
+                    ->collection('store_cover_images')
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('name')
                     ->label(__('tables.common.name'))
