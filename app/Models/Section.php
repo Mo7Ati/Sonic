@@ -11,7 +11,7 @@ use Spatie\Translatable\HasTranslations;
 #[Fillable(['title', 'description', 'type', 'group_id', 'data', 'is_active', 'ordered'])]
 class Section extends Model
 {
-    use SoftDeletes, HasTranslations;
+    use HasTranslations, SoftDeletes;
 
     /**
      * The attributes that should be cast.
@@ -72,5 +72,10 @@ class Section extends Model
     public function scopeOrdered($query)
     {
         return $query->orderBy('ordered');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 }

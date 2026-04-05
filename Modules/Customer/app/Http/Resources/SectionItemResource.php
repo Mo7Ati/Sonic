@@ -1,13 +1,12 @@
 <?php
 
-namespace Modules\Customer\app\Http\Resources;
+namespace Modules\Customer\Http\Resources;
 
 use App\Enums\SectionEnum;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Request;
 use App\Enums\SectionItemEnum;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 class SectionItemResource extends JsonResource
 {
@@ -32,8 +31,10 @@ class SectionItemResource extends JsonResource
 
     public function mergedData(): array
     {
-        if ($this->section->type === SectionEnum::SQUIRE_BANNERS)
+        if ($this->section->type === SectionEnum::SQUIRE_BANNERS) {
             return ['name' => $this->data['title'][app()->getLocale() ?? 'ar']];
+        }
+
         return [];
     }
 
@@ -76,7 +77,8 @@ class SectionItemResource extends JsonResource
         $dataImage = Arr::get($this->data, 'image');
 
         return [
-            'image' => $mediaUrl ?: ($dataImage),
+            // 'image' => $mediaUrl ?: ($dataImage),
+            'image' => "https://img.freepik.com/free-photo/top-view-table-full-food_23-2149209253.jpg?semt=ais_incoming&w=740&q=80",
         ];
     }
 
@@ -84,17 +86,7 @@ class SectionItemResource extends JsonResource
     {
         return array_merge($this->getImageData(), [
             'cooperative_id' => $this->cooperative_id,
-            'name' => $this->cooperative?->name
-        ]);
-    }
-
-    public function serializeCooperatives(): array
-    {
-        return array_merge($this->getImageData(), [
-            'governorate_id' => $this->governorate_id,
-            'name' => $this->governorate
-                ? __('forms.section_item.cooperatives_of_governorate', ['governorate' => $this->governorate->name])
-                : __('forms.section_item.all_cooperatives'),
+            'name' => $this->cooperative?->name,
         ]);
     }
 
@@ -105,7 +97,7 @@ class SectionItemResource extends JsonResource
     {
         return array_merge($this->getImageData(), [
             'group_id' => $this->group_id,
-            'name' => $this->group?->name
+            'name' => $this->group?->name,
         ]);
     }
 
@@ -116,7 +108,7 @@ class SectionItemResource extends JsonResource
     {
         return array_merge($this->getImageData(), [
             'store_id' => $this->store_id,
-            'name' => $this->store?->name
+            'name' => $this->store?->name,
         ]);
     }
 
@@ -127,7 +119,7 @@ class SectionItemResource extends JsonResource
     {
         return array_merge($this->getImageData(), [
             'store_category_id' => $this->store_category_id,
-            'name' => $this->storeCategory?->name
+            'name' => $this->storeCategory?->name,
         ]);
     }
 

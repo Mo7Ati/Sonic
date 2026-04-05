@@ -1,23 +1,18 @@
 <?php
 
-namespace Modules\Customer\app\Http\Resources;
+namespace Modules\Customer\Http\Resources;
 
-use App\Enums\CooperativeTypeEnum;
-use App\Enums\PaymentStatus;
 use App\Enums\PaymentStatusEnum;
+use App\Enums\SectionEnum;
 use App\Enums\SectionItemEnum;
 use App\Models\Branch;
-use App\Models\Cooperative;
 use App\Models\Group;
 use App\Models\Order;
-use App\Models\Reel;
 use App\Models\StoreCategory;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
-use App\Enums\SectionEnum;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-
 
 class SectionResource extends JsonResource
 {
@@ -34,8 +29,9 @@ class SectionResource extends JsonResource
 
     public function type()
     {
-        if ($this->type === SectionEnum::LIST_ITEMS)
+        if ($this->type === SectionEnum::LIST_ITEMS) {
             return "{$this->data['type']}_list_items";
+        }
 
         return $this->type;
     }
@@ -69,9 +65,9 @@ class SectionResource extends JsonResource
         return [
             'orders_count' => Order::query()
                 ->where([
-                    'customer_id' => auth('customers')->id(),
-                    'payment_status' => PaymentStatusEnum::UNPAID->value
-                ])->count()
+                    'customer_id' => auth('customer')->id(),
+                    'payment_status' => PaymentStatusEnum::UNPAID->value,
+                ])->count(),
         ];
     }
 
@@ -105,11 +101,10 @@ class SectionResource extends JsonResource
     {
         $storeCategories = StoreCategory::query()
             ->findMany($this->data['store_categories'] ?? [])
-            // ->mapInto(StoreCategoryResource::class)
+            ->mapInto(StoreCategoryResource::class)
             ->toArray();
 
         return [
-            // StoreCategoryResource::getAllArray(),
             ...$storeCategories,
         ];
     }
@@ -134,21 +129,28 @@ class SectionResource extends JsonResource
 
     public function serializeForStoreCategory()
     {
-        $branches = Branch::query()->whereHas('store', function ($query) {
-            $query->where('store_category_id', $this->data['store_category_id']);
-        })->get();
-        return $branches; //BranchResource::collection($branches)->toArray(request());
-    }
+        $branches = Branch::query()
+            ->with('store')
+            ->whereHas('store', function ($query) {
+                $query->where('category_id', $this->data['store_category_id']);
+            })
+            ->get();
 
+        return BranchResource::collection($branches)->resolve();
+    }
 
     public function serializeForGroup()
     {
         $group = Group::query()->select('stores')->find($this->data['group_id']);
         $storeIds = $group->stores ?? [];
-        $branches = Branch::query()->whereHas('store', function ($query) use ($storeIds) {
-            $query->whereIn('id', $storeIds);
-        })->get();
-        return $branches; //BranchResource::collection($branches)->toArray(request());
+        $branches = Branch::query()
+            ->with('store')
+            ->whereHas('store', function ($query) use ($storeIds) {
+                $query->whereIn('id', $storeIds);
+            })
+            ->get();
+
+        return BranchResource::collection($branches)->resolve();
     }
 
     public function serializeForMergeData(): array
@@ -160,18 +162,19 @@ class SectionResource extends JsonResource
                 SectionItemEnum::GROUP->value => ['group_id' => $this->data['group_id']],
             };
         }
+
         //        return [
-//            'target' => $this->data['type'],
-//        ];
+        //            'target' => $this->data['type'],
+        //        ];
         return [];
     }
 
     public function serializeActiveOrders()
     {
         return Order::query()
-            ->where('customer_id', auth('customers')->id())
-            ->active()
+            ->where('customer_id', auth('customer')->id())
+            // ->active()
             ->get()
-            ->map(fn($order) => $order); //OrderResource::make($order)->serializeForActiveOrdersSection());
+            ->map(fn($order) => $order); // OrderResource::make($order)->serializeForActiveOrdersSection());
     }
 }

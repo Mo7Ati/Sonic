@@ -4,7 +4,7 @@ namespace Modules\Customer\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Section;
-use Modules\Customer\app\Http\Resources\SectionResource;
+use Modules\Customer\Http\Resources\SectionResource;
 
 class HomeController extends Controller
 {
@@ -12,8 +12,9 @@ class HomeController extends Controller
     {
         $homePageSections = Section::active()->ordered()->get();
 
-        return successResponse([
+        return successResponse(
             SectionResource::collection($homePageSections),
-        ], __('messages.data_retrieved_successfully'));
+            __('messages.data_retrieved_successfully')
+        );
     }
 }
