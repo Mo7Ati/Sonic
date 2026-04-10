@@ -45,14 +45,12 @@ class HomePageSectionsSeeder extends Seeder
         $imagePath = $this->ensurePlaceholderBannerPath();
 
         $categoryFood = $this->seedStoreCategory(
-            slug: 'seed-home-food',
             name: $this->t('Food & drinks', 'مأكولات ومشروبات'),
             description: $this->t('Restaurants and cafés', 'مطاعم ومقاهي'),
             imagePath: $imagePath,
         );
 
         $categoryRetail = $this->seedStoreCategory(
-            slug: 'seed-home-retail',
             name: $this->t('Retail', 'تجزئة'),
             description: $this->t('Shops and markets', 'متاجر وأسواق'),
             imagePath: $imagePath,
@@ -227,13 +225,12 @@ class HomePageSectionsSeeder extends Seeder
         }
     }
 
-    private function seedStoreCategory(string $slug, array $name, array $description, string $imagePath): StoreCategory
+    private function seedStoreCategory(array $name, array $description, string $imagePath): StoreCategory
     {
-        $category = StoreCategory::withoutEvents(function () use ($slug, $name, $description): StoreCategory {
+        $category = StoreCategory::withoutEvents(function () use ($name, $description): StoreCategory {
             return StoreCategory::query()->updateOrCreate(
-                ['slug' => $slug],
+                ['name' => $name],
                 [
-                    'slug' => $slug,
                     'name' => $name,
                     'description' => $description,
                 ],
@@ -243,7 +240,7 @@ class HomePageSectionsSeeder extends Seeder
         $category->clearMediaCollection('store_categories_images');
         $category->addMedia($imagePath)
             ->preservingOriginal()
-            ->usingFileName(Str::slug($slug).'-'.Str::random(6).'.jpg')
+            ->usingFileName(Str::slug($name['en']).'-'.Str::random(6).'.jpg')
             ->toMediaCollection('store_categories_images');
 
         return $category;
@@ -257,13 +254,12 @@ class HomePageSectionsSeeder extends Seeder
             ['email' => $email],
             [
                 'name' => $this->t('Seed Marketplace Store', 'متجر تجريبي'),
-                'slug' => 'seed-homepage-store',
                 'description' => $this->t('Demo store for home sections', 'متجر تجريبي للصفحة الرئيسية'),
                 'keywords' => $this->t('demo, seed', 'تجريبي'),
                 'social_media' => [],
                 'phone' => '+10000000001',
                 'password' => Hash::make('password'),
-                'category_id' => $category->id,
+                // 'category_id' => $category->id,
                 'is_active' => true,
             ],
         );

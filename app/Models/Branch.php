@@ -174,6 +174,11 @@ class Branch extends Model implements HasMedia
         return $this->delivery_time_from . '-' . $this->delivery_time_to;
     }
 
+    public function getFullNameAttribute()
+    {
+        return $this->store->name . ' - ' . $this->name;
+    }
+
     public function scopeFilters(Builder $query): Builder
     {
         $request = request();

@@ -3,6 +3,7 @@
 namespace Modules\Customer\Http\Resources;
 
 use App\Models\Branch;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,44 +21,28 @@ class BranchResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => $this->full_name,
+            'description' => $this->whenLoaded('store', fn ($store) => $store->description),
+            'logo' => $this->whenLoaded('store', fn ($store) => $store->getFirstMediaUrl('store_images')),
+            'cover_image' => $this->whenLoaded('store', fn ($store) => $store->getFirstMediaUrl('store_cover_images')),
             'address' => $this->address,
             'location' => $this->location,
             'delivery_time' => $this->delivery_time,
             'delivery_fee' => $this->delivery_fee,
-            'status' => $this->status?->value,
-            'store' => StoreResource::make($this->store),
-        ];
-    }
-
-    public function serializeForShow(): array
-    {
-        $store = $this->relationLoaded('store') ? $this->store : null;
-
-        return [
-            'id' => $this->id,
-            'store_name' => $store?->name,
-            'branch_name' => $this->name,
-            'address' => $this->address,
-            'location' => $this->location,
-            'delivery_time' => $this->delivery_time,
             'status' => [
                 'label' => $this->status->label(),
                 'value' => $this->status->value,
             ],
-            'delivery_fee' => $this->delivery_fee,
-            'categories' => $store?->relationLoaded('categories')
-                ? CategoryResource::collection($store->categories)
-                : [],
-            'products' => $this->relationLoaded('availableProducts')
-                ? $this->availableProducts
-                    ->groupBy(fn ($product) => $product->category?->name ?? __('No Category'))
-                    ->map(fn ($items, $categoryName) => [
-                        'category' => $categoryName,
-                        'products' => ProductResource::collection($items),
-                    ])
-                    ->values()
-                : [],
+            'categories' => $this->when(
+                $this->relationLoaded('store') && $this->store->relationLoaded('categories'),
+                fn () => CategoryResource::collection($this->store->categories),
+            ),
+            'products' => $this->when(
+                $this->relationLoaded('availableProducts'),
+                fn () => $this->availableProducts
+                    ->groupBy(fn (Product $product) => $product->category?->name ?? __('Uncategorized'))
+                    ->map(fn ($products) => ProductResource::collection($products)),
+            ),
         ];
     }
 }

@@ -13,7 +13,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
 
-#[Fillable(['name', 'slug', 'store_id', 'description', 'is_active'])]
+#[Fillable(['name', 'store_id', 'description', 'is_active'])]
 class Category extends Model implements HasMedia
 {
     use HasFactory, HasTranslations, InteractsWithMedia, SoftDeletes;
@@ -30,13 +30,6 @@ class Category extends Model implements HasMedia
     {
         static::creating(function ($model) {
             $model->store_id = auth()->guard('store')->id();
-            $model->slug = Str::slug($model->getTranslation('name', 'en'));
-        });
-
-        static::updating(function ($model) {
-            if ($model->isDirty('name')) {
-                $model->slug = Str::slug($model->getTranslation('name', 'en'));
-            }
         });
     }
 

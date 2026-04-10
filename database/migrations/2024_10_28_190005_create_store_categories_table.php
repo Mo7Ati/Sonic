@@ -17,7 +17,6 @@ return new class extends Migration {
                 ->constrained('store_categories')
                 ->restrictOnDelete();
             $table->json('name');
-            $table->string('slug')->unique();
             $table->json('description')->nullable();
 
             $table->softDeletes();

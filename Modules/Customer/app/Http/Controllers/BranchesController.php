@@ -12,6 +12,7 @@ class BranchesController extends Controller
     public function index(Request $request)
     {
         $branches = Branch::query()
+            ->with('store')
             ->filters()
             ->paginate(15);
 
@@ -35,7 +36,7 @@ class BranchesController extends Controller
             ->findOrFail($branch_id);
 
         return successResponse(
-            BranchResource::make($branch)->serializeForShow(),
+            BranchResource::make($branch),
             __('messages.data_retrieved_successfully'),
         );
     }
