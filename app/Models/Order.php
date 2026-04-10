@@ -4,38 +4,34 @@ namespace App\Models;
 
 use App\Enums\OrderStatusEnum;
 use App\Enums\PaymentStatusEnum;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
+#[Fillable([
+    'status',
+    'payment_status',
+    'cancelled_reason',
+    'customer_id',
+    'customer_data',
+    'branch_id',
+    'address_id',
+    'address_data',
+    'total',
+    'total_items_amount',
+    'delivery_amount',
+    'notes',
+])]
 class Order extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'status',
-        'payment_status',
-        'cancelled_reason',
-        'customer_id',
-        'customer_data',
-        'store_id',
-        'address_id',
-        'address_data',
-        'total',
-        'total_items_amount',
-        'delivery_amount',
-        'tax_amount',
-        'notes',
-        'stripe_session_id',
-        'checkout_group_id',
-    ];
-
     protected $casts = [
         'customer_data' => 'array',
         'address_data' => 'array',
-        'total' => 'float',
-        'total_items_amount' => 'float',
-        'delivery_amount' => 'float',
-        'tax_amount' => 'float',
+        'total' => 'decimal:2',
+        'total_items_amount' => 'decimal:2',
+        'delivery_amount' => 'decimal:2',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'status' => OrderStatusEnum::class,
@@ -50,9 +46,9 @@ class Order extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function store()
+    public function branch()
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(Branch::class);
     }
     public function products()
     {
@@ -61,6 +57,7 @@ class Order extends Model
             ->withPivot('quantity', 'unit_price', 'product_data', 'options_amount', 'options_data', 'additions_amount', 'additions_data', 'total_price')
             ->withTimestamps();
     }
+
     public function items()
     {
         return $this->hasMany(orderItems::class, 'order_id');
@@ -87,10 +84,12 @@ class Order extends Model
                     ->orWhere('phone', 'LIKE', "%{$search}%");
             });
     }
+
     public function scopeStatus($query, $status)
     {
         return $query->where('status', $status);
     }
+
     public function scopePaymentStatus($query, $payment_status)
     {
         return $query->where('payment_status', $payment_status);

@@ -49,8 +49,8 @@ class BranchResource extends JsonResource
             'categories' => $store?->relationLoaded('categories')
                 ? CategoryResource::collection($store->categories)
                 : [],
-            'products' => $store?->relationLoaded('products')
-                ? $store->products
+            'products' => $this->relationLoaded('availableProducts')
+                ? $this->availableProducts
                     ->groupBy(fn ($product) => $product->category?->name ?? __('No Category'))
                     ->map(fn ($items, $categoryName) => [
                         'category' => $categoryName,

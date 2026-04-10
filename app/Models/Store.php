@@ -18,7 +18,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
 
-#[Fillable(['name', 'slug', 'description', 'keywords', 'social_media', 'email', 'phone', 'password', 'category_id', 'is_active'])]
+#[Fillable(['name', 'description', 'keywords', 'social_media', 'email', 'phone', 'password', 'is_active'])]
 #[Hidden(['password', 'remember_token'])]
 class Store extends Authenticatable implements HasMedia, Wallet
 {
@@ -26,39 +26,16 @@ class Store extends Authenticatable implements HasMedia, Wallet
 
     protected $casts = [
         'name' => 'array',
-        // 'address' => 'array',
         'description' => 'array',
         'keywords' => 'array',
         'social_media' => 'array',
-        // 'delivery_area_polygon' => 'json',
-        // 'profile_completed_at' => 'datetime',
     ];
 
-    public array $translatable = ['name', 'description', 'keywords']; // , 'address'
-
-    protected static function booted()
-    {
-        static::creating(function ($model) {
-            if (empty($model->slug)) {
-                $model->slug = Str::slug($model->getTranslation('name', 'en'));
-            }
-        });
-
-        static::updating(function ($model) {
-            if ($model->isDirty('name')) {
-                $model->slug = Str::slug($model->getTranslation('name', 'en'));
-            }
-        });
-    }
-
-    // public function hasCompletedProfile(): bool
-    // {
-    //     return $this->profile_completed_at !== null;
-    // }
+    public array $translatable = ['name', 'description', 'keywords'];
 
     public function setPasswordAttribute(?string $value): void
     {
-        if (! filled($value)) {
+        if (!filled($value)) {
             return;
         }
 
@@ -75,6 +52,16 @@ class Store extends Authenticatable implements HasMedia, Wallet
     public function storeCategories(): BelongsToMany
     {
         return $this->belongsToMany(StoreCategory::class, 'category_stores', 'store_id', 'category_id');
+    }
+
+    public function branches()
+    {
+        return $this->hasMany(Branch::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 
     public function products()
@@ -108,16 +95,9 @@ class Store extends Authenticatable implements HasMedia, Wallet
         ], 'like', "%{$search}%");
     }
 
-    // public function scopeCategory($query, $category)
-    // {
-    //     return $query->whereHas('category', function ($query) use ($category) {
-    //         $query->where('slug', $category);
-    //     });
-    // }
-
-    public function scopeActive($query, $value = true)
+    public function scopeActive($query)
     {
-        return $query->where('is_active', $value);
+        return $query->where('is_active', true);
     }
 
     public function registerMediaCollections(): void
@@ -140,8 +120,7 @@ class Store extends Authenticatable implements HasMedia, Wallet
     public function scopeApplyFilters($query, Request $request)
     {
         return $query
-            ->when($request->input('search'), fn ($q, $search) => $q->search($search))
-            // ->when($request->input('category'), fn($q, $category) => $q->category($category))
-            ->when($request->filled('is_active'), fn ($q) => $q->active($request->input('is_active')));
+            ->when($request->input('search'), fn($q, $search) => $q->search($search))
+            ->when($request->filled('is_active'), fn($q) => $q->active());
     }
 }

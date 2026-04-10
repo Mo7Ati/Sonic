@@ -12,9 +12,8 @@ return new class extends Migration {
     {
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
+
             $table->json('name');
-            $table->string('slug')->unique();
-            // $table->json('address');
             $table->json('description')->nullable();
             $table->json('keywords')->nullable();
 
@@ -23,12 +22,8 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('phone')->nullable()->unique();
             $table->string('password');
-            $table->foreignId('category_id')->nullable()->constrained('store_categories');
 
-            // $table->integer('delivery_time');
-            // $table->json('delivery_area_polygon')->nullable();
             $table->boolean('is_active')->default(true);
-
 
             $table->text('two_factor_secret')
                 ->nullable();

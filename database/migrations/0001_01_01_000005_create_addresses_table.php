@@ -15,7 +15,6 @@ return new class extends Migration {
             $table->string('name');
             $table->foreignId('customer_id')->constrained('customers');
             $table->json('location');
-            $table->json('fields');
             $table->softDeletes();
             $table->timestamps();
         });

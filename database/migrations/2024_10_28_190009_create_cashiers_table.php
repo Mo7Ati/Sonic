@@ -4,17 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('cashiers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('phone_number');
-            $table->string('password');
             $table->string('email')->unique();
+            $table->string('password');
+            $table->string('phone_number');
             $table->foreignId('branch_id')->constrained('branches', 'id')->onDelete('cascade');
+
+            $table->softDeletes();
             $table->timestamps();
         });
     }

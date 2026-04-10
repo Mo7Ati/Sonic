@@ -3,15 +3,19 @@
 namespace App\Models;
 
 use App\Enums\BranchStatusEnum;
+use App\Observers\BranchObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
 
+#[ObservedBy([BranchObserver::class])]
 #[Fillable(['name', 'store_id', 'address', 'delivery_time_from', 'delivery_time_to', 'delivery_fee', 'range_of_area_polygon', 'location', 'is_active', 'status'])]
 class Branch extends Model implements HasMedia
 {
@@ -59,12 +63,29 @@ class Branch extends Model implements HasMedia
         return $this->hasMany(Order::class);
     }
 
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class)
+            ->withPivot(['price', 'compare_price', 'is_available', 'quantity'])
+            ->withTimestamps();
+    }
+
+    public function availableProducts(): BelongsToMany
+    {
+        return $this->products()->wherePivot('is_available', true);
+    }
+
+    public function cashiers()
+    {
+        return $this->hasMany(Cashier::class);
+    }
+
     /**
      * Scope for location-based search within radius
      */
     public function scopeNearLocation($query, $latitude, $longitude, $radius = 10)
     {
-        if (! $latitude || ! $longitude) {
+        if (!$latitude || !$longitude) {
             return $query;
         }
 
@@ -103,7 +124,7 @@ class Branch extends Model implements HasMedia
      */
     public function scopeOrderByDistance($query, $latitude, $longitude)
     {
-        if (! $latitude || ! $longitude) {
+        if (!$latitude || !$longitude) {
             return $query;
         }
 
@@ -139,10 +160,10 @@ class Branch extends Model implements HasMedia
     {
         return $query->when($value, function ($q) use ($value) {
             $q->where(function ($q) use ($value) {
-                $q->whereRaw("LOWER(JSON_EXTRACT(name, '$.*')) LIKE ?", ['%'.mb_strtolower($value).'%'])
-                    ->orWhereRaw("LOWER(JSON_EXTRACT(address, '$.*')) LIKE ?", ['%'.mb_strtolower($value).'%'])
+                $q->whereRaw("LOWER(JSON_EXTRACT(name, '$.*')) LIKE ?", ['%' . mb_strtolower($value) . '%'])
+                    ->orWhereRaw("LOWER(JSON_EXTRACT(address, '$.*')) LIKE ?", ['%' . mb_strtolower($value) . '%'])
                     ->orWhereHas('store', function ($q) use ($value) {
-                        $q->whereRaw("LOWER(JSON_EXTRACT(name, '$.*')) LIKE ?", ['%'.mb_strtolower($value).'%']);
+                        $q->whereRaw("LOWER(JSON_EXTRACT(name, '$.*')) LIKE ?", ['%' . mb_strtolower($value) . '%']);
                     });
             });
         });
@@ -150,7 +171,7 @@ class Branch extends Model implements HasMedia
 
     public function getDeliveryTimeAttribute()
     {
-        return $this->delivery_time_from.'-'.$this->delivery_time_to;
+        return $this->delivery_time_from . '-' . $this->delivery_time_to;
     }
 
     public function scopeFilters(Builder $query): Builder

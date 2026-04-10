@@ -6,13 +6,13 @@ use App\Enums\BranchStatusEnum;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 
 #[Fillable(['name', 'phone_number', 'password', 'branch_id', 'email'])]
 #[Hidden(['password'])]
-class Cashier extends Model
+class Cashier extends Authenticatable
 {
     use HasFactory;
 
@@ -21,8 +21,7 @@ class Cashier extends Model
         return $this->belongsTo(Branch::class);
     }
 
-    // Hash the password when setting it
-    public function setPasswordAttribute($value)
+    public function setPasswordAttribute(?string $value): void
     {
         if (! filled($value)) {
             return;
@@ -33,7 +32,7 @@ class Cashier extends Model
             : Hash::make($value);
     }
 
-    public function getIsAvailableBranchAttribute()
+    public function getIsAvailableBranchAttribute(): bool
     {
         return $this->branch?->status === BranchStatusEnum::AVAILABLE;
     }

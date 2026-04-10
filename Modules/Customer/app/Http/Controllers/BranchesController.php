@@ -28,7 +28,10 @@ class BranchesController extends Controller
     public function show($branch_id)
     {
         $branch = Branch::query()
-            ->with(['store' => ['products.category', 'categories']])
+            ->with([
+                'store.categories',
+                'availableProducts.category',
+            ])
             ->findOrFail($branch_id);
 
         return successResponse(

@@ -55,6 +55,20 @@ class ProductForm
                                         'nullable',
                                         Rule::exists('categories', 'id')->where('store_id', auth()->guard('store')->id()),
                                     ]),
+                                TextInput::make('price')
+                                    ->label(__('forms.products.price'))
+                                    ->numeric()
+                                    ->required()
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->prefix(__('forms.branches.currency_prefix')),
+                                TextInput::make('compare_price')
+                                    ->label(__('forms.products.compare_price'))
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->prefix(__('forms.branches.currency_prefix'))
+                                    ->nullable(),
                                 TextInput::make('quantity')
                                     ->label(__('forms.products.quantity'))
                                     ->numeric()

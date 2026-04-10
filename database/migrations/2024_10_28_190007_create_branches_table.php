@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -23,7 +22,6 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
 
             $table->json('range_of_area_polygon')->nullable();
-            $table->json('location');
 
             $table->foreignId('store_id')->constrained('stores', 'id');
 

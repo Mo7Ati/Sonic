@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name')->nullable();
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('phone_number')->nullable()->unique();
 
@@ -26,6 +27,8 @@ return new class extends Migration {
                 ->nullable();
             $table->timestamp('two_factor_confirmed_at')
                 ->nullable();
+
+
             $table->rememberToken();
 
             $table->softDeletes();

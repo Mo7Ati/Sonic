@@ -17,13 +17,15 @@ return new class extends Migration {
             $table->foreignId('product_id')->nullable()->constrained('products')->nullOnDelete();
             $table->json('product_data');
 
-            $table->float('options_amount')->default(0);
+            $table->decimal('options_amount', 10, 2)->default(0);
             $table->json('options_data')->nullable();
 
-            $table->float('additions_amount')->default(0);
+            $table->decimal('additions_amount', 10, 2)->default(0);
             $table->json('additions_data')->nullable();
 
-            $table->float('unit_price');
+            $table->decimal('unit_price', 10, 2);
+            $table->decimal('total_price', 12, 2);
+
             $table->unsignedSmallInteger('quantity')->default(1);
 
             $table->softDeletes();

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Admin;
+use App\Models\Cashier;
 use App\Models\Customer;
 use App\Models\Store;
 use App\Models\User;
@@ -60,6 +61,11 @@ return [
             'driver' => 'session',
             'provider' => 'customers',
         ],
+
+        'cashier' => [
+            'driver' => 'session',
+            'provider' => 'cashiers',
+        ],
     ],
 
     /*
@@ -98,6 +104,11 @@ return [
         'customers' => [
             'driver' => 'eloquent',
             'model' => Customer::class,
+        ],
+
+        'cashiers' => [
+            'driver' => 'eloquent',
+            'model' => Cashier::class,
         ],
 
         // 'users' => [
@@ -149,6 +160,13 @@ return [
 
         'customers' => [
             'provider' => 'customers',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'cashiers' => [
+            'provider' => 'cashiers',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,

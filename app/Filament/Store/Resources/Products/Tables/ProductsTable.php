@@ -22,6 +22,10 @@ class ProductsTable
                 TextColumn::make('category.name')
                     ->label(__('tables.products.category'))
                     ->searchable(),
+                TextColumn::make('price')
+                    ->label(__('tables.products.price'))
+                    ->money('USD')
+                    ->sortable(),
                 TextColumn::make('quantity')
                     ->label(__('tables.products.quantity'))
                     ->sortable(),

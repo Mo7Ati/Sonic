@@ -12,6 +12,10 @@ return new class extends Migration {
     {
         Schema::create('store_categories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('parent_id')
+                ->nullable()
+                ->constrained('store_categories')
+                ->restrictOnDelete();
             $table->json('name');
             $table->string('slug')->unique();
             $table->json('description')->nullable();
