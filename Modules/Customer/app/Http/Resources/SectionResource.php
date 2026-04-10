@@ -124,15 +124,18 @@ class SectionResource extends JsonResource
     private function serializeListItemsSection()
     {
         // Search section typically doesn't need additional data
-        return $this->{'serializeFor' . Str::camel($this->data['type'])}();
+        return $this->{'serializeFor'.Str::camel($this->data['type'])}();
     }
 
     public function serializeForStoreCategory()
     {
+        $categoryId = $this->data['store_category_id'];
+
         $branches = Branch::query()
-            ->with('store')
-            ->whereHas('store', function ($query) {
-                $query->where('category_id', $this->data['store_category_id']);
+            ->withWhereHas('store', function ($query) use ($categoryId) {
+                $query->whereHas('storeCategories', function ($cq) use ($categoryId) {
+                    $cq->where('store_categories.id', $categoryId);
+                });
             })
             ->get();
 
@@ -175,6 +178,6 @@ class SectionResource extends JsonResource
             ->where('customer_id', auth('customer')->id())
             // ->active()
             ->get()
-            ->map(fn($order) => $order); // OrderResource::make($order)->serializeForActiveOrdersSection());
+            ->map(fn ($order) => $order); // OrderResource::make($order)->serializeForActiveOrdersSection());
     }
 }

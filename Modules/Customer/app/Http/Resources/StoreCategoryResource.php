@@ -23,6 +23,7 @@ class StoreCategoryResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'image' => $this->getFirstMediaUrl('store_categories_images') ?: null,
+            'sub_categories' => $this->collection($this->whenLoaded('children')),
         ];
     }
 }

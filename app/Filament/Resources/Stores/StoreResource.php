@@ -51,8 +51,7 @@ class StoreResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->with('category');
+        return parent::getEloquentQuery();
     }
 
     public static function getNavigationGroup(): ?string

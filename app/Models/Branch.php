@@ -3,14 +3,11 @@
 namespace App\Models;
 
 use App\Enums\BranchStatusEnum;
-use App\Enums\DaysEnum;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
@@ -18,7 +15,7 @@ use Spatie\Translatable\HasTranslations;
 #[Fillable(['name', 'store_id', 'address', 'delivery_time_from', 'delivery_time_to', 'delivery_fee', 'range_of_area_polygon', 'location', 'is_active', 'status'])]
 class Branch extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, SoftDeletes, HasTranslations;
+    use HasFactory, HasTranslations, InteractsWithMedia, SoftDeletes;
 
     protected $casts = [
         'name' => 'array',
@@ -39,8 +36,8 @@ class Branch extends Model implements HasMedia
             }
             if (is_null($model->location) && auth()->guard('store')->check()) {
                 $model->location = [
-                    'latitude' => "123",
-                    'longitude' => "123",
+                    'latitude' => '123',
+                    'longitude' => '123',
                 ];
             }
         });
@@ -62,54 +59,12 @@ class Branch extends Model implements HasMedia
         return $this->hasMany(Order::class);
     }
 
-    // public function times()
-    // {
-    //     return $this->hasMany(BranchTimes::class);
-    // }
-
     /**
      * Get the products through the store relationship.
      */
     public function products()
     {
         return $this->hasManyThrough(Product::class, Store::class);
-    }
-
-    // public function saveTimes($times)
-    // {
-    //     $this->times()->delete();
-
-    //     return $this->times()->createMany(collect($times)->filter(fn($time) => !!$time['enabled'] ?? false)->map(function ($time) {
-    //         return [
-    //             'index' => DaysEnum::from($time['day'])->index(),
-    //             'from' => $time['enabled'] ? $time['from'] : null,
-    //             'to' => $time['enabled'] ? $time['to'] : null,
-    //         ];
-    //     })->toArray());
-    // }
-
-    public function scopeSearch($query, Request $request)
-    {
-        return $query->storeCategory($request->query('category'));
-    }
-
-    public function scopeStoreCategory($q, $value)
-    {
-        $q->when($value, function (Builder $query, string $value) {
-            // If category is numeric, filter by ID; otherwise search by name
-            if (is_numeric($value)) {
-                $query->whereHas('store.category', function ($q) use ($value) {
-                    $q->where('id', $value);
-                });
-            } else {
-                $query->withWhereRelation(
-                    'store.category',
-                    'name',
-                    'LIKE',
-                    '%' . $value . '%'
-                );
-            }
-        });
     }
 
     /**
@@ -130,16 +85,16 @@ class Branch extends Model implements HasMedia
     }
 
     /**
-     * Scope for category filtering
+     * Scope for store category filtering
      */
-    public function scopeByCategory($query, $categoryId)
+    public function scopeStoreCategory(Builder $query, ?string $storeCategoryId = null): Builder
     {
-        if (!$categoryId) {
-            return $query;
-        }
-
-        return $query->whereHas('store.category', function ($q) use ($categoryId) {
-            $q->where('id', $categoryId);
+        return $query->withWhereHas('store', function ($storeQuery) use ($storeCategoryId) {
+            $storeQuery->when($storeCategoryId, function ($q) use ($storeCategoryId) {
+                $q->whereHas('storeCategories', function ($cq) use ($storeCategoryId) {
+                    $cq->where('store_categories.id', $storeCategoryId);
+                });
+            });
         });
     }
 
@@ -168,88 +123,9 @@ class Branch extends Model implements HasMedia
         ", [$longitude, $latitude]);
     }
 
-    public function scopeSearchWithProducts($q, $search)
-    {
-        $q->whereHas('store', function ($branchQuery) use ($search) {
-            $branchQuery->where('name', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
-                ->orWhereHas('products', function ($productQuery) use ($search) {
-                    $productQuery->active();
-                    if ($search) {
-                        $productQuery->where(function ($q) use ($search) {
-                            $q->where('name', 'like', "%{$search}%")
-                                ->where('keywords', 'like', "%{$search}%")
-                                ->orWhere('description', 'like', "%{$search}%");
-                        });
-                    }
-                    $productQuery->with(['category', 'additions', 'options']);
-                });
-        })
-            ->with([
-                'store',
-                'store.products' => function ($productQuery) use ($search) {
-                    $productQuery->active();
-
-                    if ($search) {
-                        $productQuery->where(function ($q) use ($search) {
-                            $q->where('name', 'like', "%{$search}%")
-                                ->where('keywords', 'like', "%{$search}%")
-                                ->orWhere('description', 'like', "%{$search}%");
-                        });
-                    }
-                    $productQuery->with(['category', 'additions', 'options']);
-                },
-            ]);
-    }
-
-    public function getDeliveryTimeAttribute()
-    {
-        return $this->delivery_time_from . '-' . $this->delivery_time_to;
-    }
-
-    public function scopeFilters($q, $filters)
-    {
-        $q->where(function ($query) use ($filters) {
-            if (Arr::get($filters, 'search')) {
-                $query->searchWithBranches($filters['search']);
-            }
-            if (isset($filters['categories'])) {
-                $query->storeCategories($filters['categories']);
-            }
-            if (Arr::get($filters, 'rate')) {
-                $query->averageRate($filters['rate']);
-            }
-        });
-    }
-
-    public function scopeSearchWithBranches($q, $value)
-    {
-        $q->when($value, function (Builder $query, string $value) {
-            $query->where('name', 'like', "%{$value}%")
-                ->orWhere('address', 'like', "%{$value}%")
-                ->orWhereHas('store', function ($storeQuery) use ($value) {
-                    $storeQuery->where('name', 'like', "%{$value}%")
-                        ->orWhere('description', 'like', "%{$value}%");
-                });
-        });
-    }
-
-    public function scopeStoreCategories($q, $value)
-    {
-        $categories = array_filter(
-            (array) json_decode($value, true),
-            fn($category) => (int) $category !== 0
-        );
-
-        if (empty($categories)) {
-            return $q;
-        }
-
-        $q->whereHas('store.category', function ($categoryQuery) use ($categories) {
-            $categoryQuery->whereIn('id', $categories);
-        });
-    }
-
+    /**
+     * Scope to order by average rate
+     */
     public function scopeAverageRate($q, $value)
     {
         $q->when($value, function (Builder $query, string $value) {
@@ -265,5 +141,34 @@ class Branch extends Model implements HasMedia
         $q->whereHas('store', function ($storeQuery) {
             $storeQuery->where('is_active', true);
         });
+    }
+
+    public function scopeSearch(Builder $query, ?string $value): Builder
+    {
+        return $query->when($value, function ($q) use ($value) {
+            $q->where(function ($q) use ($value) {
+                $q->whereRaw("LOWER(JSON_EXTRACT(name, '$.*')) LIKE ?", ['%' . mb_strtolower($value) . '%'])
+                    ->orWhereRaw("LOWER(JSON_EXTRACT(address, '$.*')) LIKE ?", ['%' . mb_strtolower($value) . '%'])
+                    ->orWhereHas('store', function ($q) use ($value) {
+                        $q->whereRaw("LOWER(JSON_EXTRACT(name, '$.*')) LIKE ?", ['%' . mb_strtolower($value) . '%']);
+                    });
+            });
+        });
+    }
+
+    public function getDeliveryTimeAttribute()
+    {
+        return $this->delivery_time_from . '-' . $this->delivery_time_to;
+    }
+
+    public function scopeFilters(Builder $query): Builder
+    {
+        $request = request();
+
+        return $query
+            ->active()
+            ->search($request->input('search'))
+            ->storeCategory($request->input('store_category_id'))
+            ->averageRate($request->input('average_rate'));
     }
 }

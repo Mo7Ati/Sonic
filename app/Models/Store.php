@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\Request;
@@ -66,9 +67,14 @@ class Store extends Authenticatable implements HasMedia, Wallet
             : Hash::make($value);
     }
 
-    public function category()
+    /**
+     * The categories that the store belongs to.
+     *
+     * @return BelongsToMany<StoreCategory>
+     */
+    public function storeCategories(): BelongsToMany
     {
-        return $this->belongsTo(StoreCategory::class);
+        return $this->belongsToMany(StoreCategory::class, 'category_stores', 'store_id', 'category_id');
     }
 
     public function products()
@@ -102,12 +108,12 @@ class Store extends Authenticatable implements HasMedia, Wallet
         ], 'like', "%{$search}%");
     }
 
-    public function scopeCategory($query, $category)
-    {
-        return $query->whereHas('category', function ($query) use ($category) {
-            $query->where('slug', $category);
-        });
-    }
+    // public function scopeCategory($query, $category)
+    // {
+    //     return $query->whereHas('category', function ($query) use ($category) {
+    //         $query->where('slug', $category);
+    //     });
+    // }
 
     public function scopeActive($query, $value = true)
     {
@@ -135,7 +141,7 @@ class Store extends Authenticatable implements HasMedia, Wallet
     {
         return $query
             ->when($request->input('search'), fn ($q, $search) => $q->search($search))
-            ->when($request->input('category'), fn ($q, $category) => $q->category($category))
+            // ->when($request->input('category'), fn($q, $category) => $q->category($category))
             ->when($request->filled('is_active'), fn ($q) => $q->active($request->input('is_active')));
     }
 }

@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
@@ -51,18 +51,14 @@ class StoreCategory extends Model implements HasMedia
         return $this->hasMany(self::class, 'parent_id');
     }
 
-    public function stores()
-    {
-        return $this->hasMany(Store::class, 'category_id', 'id');
-    }
-
     /**
-     * @param  Builder<StoreCategory>  $query
-     * @return Builder<StoreCategory>
+     * The stores that the category belongs to.
+     *
+     * @return BelongsToMany<Store>
      */
-    public function scopeRoots(Builder $query): Builder
+    public function stores(): BelongsToMany
     {
-        return $query->whereNull('parent_id');
+        return $this->belongsToMany(Store::class, 'category_stores', 'category_id', 'store_id');
     }
 
     public function assignUniqueSlug(): void

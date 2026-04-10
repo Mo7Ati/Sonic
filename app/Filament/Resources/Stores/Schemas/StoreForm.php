@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Stores\Schemas;
 
 use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -13,6 +14,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 
 class StoreForm
 {
@@ -94,11 +96,25 @@ class StoreForm
 
                                 Section::make(__('forms.stores.store_details'))
                                     ->schema([
-                                        Select::make('category_id')
-                                            ->label(__('forms.stores.category'))
-                                            ->relationship('category', 'name')
-                                            ->preload()
-                                            ->searchable(),
+                                        // Select::make('primary_category')
+                                        //     ->label(__('forms.stores.category'))
+                                        //     ->relationship('category', 'name', fn(Builder $query) => $query->roots())
+                                        //     ->preload()
+                                        //     ->live()
+                                        //     ->required()
+                                        //     ->searchable(),
+
+                                        // Select::make('category_id')
+                                        //     ->label(__('forms.stores.category'))
+                                        //     ->relationship('category', 'name', fn(Builder $query) => $query->roots())
+                                        //     ->preload()
+                                        //     ->searchable(),
+
+                                        SelectTree::make('storeCategories')
+                                            ->relationship('storeCategories', 'name', 'parent_id')
+                                            ->withCount()
+                                            // ->multiple()
+                                            ->enableBranchNode(),
 
                                         SpatieMediaLibraryFileUpload::make('logo')
                                             ->disk('public')

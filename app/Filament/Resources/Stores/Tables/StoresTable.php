@@ -40,9 +40,10 @@ class StoresTable
                     ->label(__('tables.common.email'))
                     ->searchable(),
 
-                TextColumn::make('category.name')
-                    ->label(__('tables.stores.category'))
-                    ->sortable(),
+                // TextColumn::make('storeCategories')
+                //     ->label(__('tables.stores.category'))
+                //     ->formatStateUsing(fn ($state) => $state->pluck('name')->implode(', '))
+                //     ->sortable(),
 
                 ToggleColumn::make('is_active')
                     ->label(__('tables.common.is_active')),
@@ -66,11 +67,11 @@ class StoresTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('category_id')
-                    ->label(__('tables.stores.category'))
-                    ->relationship('category', 'name')
-                    ->preload()
-                    ->searchable(),
+                // SelectFilter::make('category_id')
+                //     ->label(__('tables.stores.category'))
+                //     ->relationship('category', 'name')
+                //     ->preload()
+                //     ->searchable(),
 
                 TernaryFilter::make('is_active')
                     ->label(__('tables.common.is_active'))
