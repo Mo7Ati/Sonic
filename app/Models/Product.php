@@ -44,7 +44,7 @@ class Product extends Model implements HasMedia
         });
     }
 
-    public array $translatable = ['name', 'description'];
+    public array $translatable = ['name', 'description', 'keywords'];
 
     public function store()
     {

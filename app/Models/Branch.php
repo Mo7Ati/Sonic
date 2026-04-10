@@ -60,19 +60,11 @@ class Branch extends Model implements HasMedia
     }
 
     /**
-     * Get the products through the store relationship.
-     */
-    public function products()
-    {
-        return $this->hasManyThrough(Product::class, Store::class);
-    }
-
-    /**
      * Scope for location-based search within radius
      */
     public function scopeNearLocation($query, $latitude, $longitude, $radius = 10)
     {
-        if (!$latitude || !$longitude) {
+        if (! $latitude || ! $longitude) {
             return $query;
         }
 
@@ -111,7 +103,7 @@ class Branch extends Model implements HasMedia
      */
     public function scopeOrderByDistance($query, $latitude, $longitude)
     {
-        if (!$latitude || !$longitude) {
+        if (! $latitude || ! $longitude) {
             return $query;
         }
 
@@ -147,10 +139,10 @@ class Branch extends Model implements HasMedia
     {
         return $query->when($value, function ($q) use ($value) {
             $q->where(function ($q) use ($value) {
-                $q->whereRaw("LOWER(JSON_EXTRACT(name, '$.*')) LIKE ?", ['%' . mb_strtolower($value) . '%'])
-                    ->orWhereRaw("LOWER(JSON_EXTRACT(address, '$.*')) LIKE ?", ['%' . mb_strtolower($value) . '%'])
+                $q->whereRaw("LOWER(JSON_EXTRACT(name, '$.*')) LIKE ?", ['%'.mb_strtolower($value).'%'])
+                    ->orWhereRaw("LOWER(JSON_EXTRACT(address, '$.*')) LIKE ?", ['%'.mb_strtolower($value).'%'])
                     ->orWhereHas('store', function ($q) use ($value) {
-                        $q->whereRaw("LOWER(JSON_EXTRACT(name, '$.*')) LIKE ?", ['%' . mb_strtolower($value) . '%']);
+                        $q->whereRaw("LOWER(JSON_EXTRACT(name, '$.*')) LIKE ?", ['%'.mb_strtolower($value).'%']);
                     });
             });
         });
@@ -158,7 +150,7 @@ class Branch extends Model implements HasMedia
 
     public function getDeliveryTimeAttribute()
     {
-        return $this->delivery_time_from . '-' . $this->delivery_time_to;
+        return $this->delivery_time_from.'-'.$this->delivery_time_to;
     }
 
     public function scopeFilters(Builder $query): Builder

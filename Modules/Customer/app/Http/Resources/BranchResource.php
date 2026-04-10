@@ -23,22 +23,41 @@ class BranchResource extends JsonResource
             'name' => $this->name,
             'address' => $this->address,
             'location' => $this->location,
-            'delivery_time_from' => $this->delivery_time_from,
-            'delivery_time_to' => $this->delivery_time_to,
             'delivery_time' => $this->delivery_time,
             'delivery_fee' => $this->delivery_fee,
-            'is_active' => $this->is_active,
             'status' => $this->status?->value,
-            'store' => $this->when(
-                $this->relationLoaded('store'),
-                fn (): array => [
-                    'id' => $this->store->id,
-                    'name' => $this->store->name,
-                    'slug' => $this->store->slug,
-                    'logo' => $this->store->getFirstMediaUrl('store_images') ?: null,
-                    'cover_image' => $this->store->getFirstMediaUrl('store_cover_images') ?: null,
-                ],
-            ),
+            'store' => StoreResource::make($this->store),
+        ];
+    }
+
+    public function serializeForShow(): array
+    {
+        $store = $this->relationLoaded('store') ? $this->store : null;
+
+        return [
+            'id' => $this->id,
+            'store_name' => $store?->name,
+            'branch_name' => $this->name,
+            'address' => $this->address,
+            'location' => $this->location,
+            'delivery_time' => $this->delivery_time,
+            'status' => [
+                'label' => $this->status->label(),
+                'value' => $this->status->value,
+            ],
+            'delivery_fee' => $this->delivery_fee,
+            'categories' => $store?->relationLoaded('categories')
+                ? CategoryResource::collection($store->categories)
+                : [],
+            'products' => $store?->relationLoaded('products')
+                ? $store->products
+                    ->groupBy(fn ($product) => $product->category?->name ?? __('No Category'))
+                    ->map(fn ($items, $categoryName) => [
+                        'category' => $categoryName,
+                        'products' => ProductResource::collection($items),
+                    ])
+                    ->values()
+                : [],
         ];
     }
 }

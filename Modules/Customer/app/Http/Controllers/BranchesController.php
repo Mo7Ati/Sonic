@@ -24,4 +24,16 @@ class BranchesController extends Controller
             __('messages.data_retrieved_successfully'),
         );
     }
+
+    public function show($branch_id)
+    {
+        $branch = Branch::query()
+            ->with(['store' => ['products.category', 'categories']])
+            ->findOrFail($branch_id);
+
+        return successResponse(
+            BranchResource::make($branch)->serializeForShow(),
+            __('messages.data_retrieved_successfully'),
+        );
+    }
 }

@@ -15,4 +15,5 @@ Route::prefix('customer')->group(function () {
 
     // Branches
     Route::get('branches', [BranchesController::class, 'index']);
+    Route::get('branches/{id}', [BranchesController::class, 'show']);
 });
