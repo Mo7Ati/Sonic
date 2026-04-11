@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Enums\BranchStatusEnum;
 use App\Models\Branch;
+use App\Models\Cashier;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Store;
@@ -20,13 +21,13 @@ class DemoStoreWithInventorySeeder extends Seeder
         $store = Store::query()->updateOrCreate(
             ['email' => self::STORE_EMAIL],
             [
-                'name' => ['en' => 'Green Basket Market', 'ar' => 'سوق السلة الخضراء'],
+                'name' => ['en' => 'Spice Route Kitchen', 'ar' => 'مطبخ طريق التوابل'],
                 'description' => [
-                    'en' => 'Neighborhood grocery with fresh produce, bakery, and daily essentials.',
-                    'ar' => 'بقالة الحي مع خضار طازجة ومخبوزات واحتياجات يومية.',
+                    'en' => 'Neighborhood grill and kitchen with grilled platters, bowls, and comfort classics for delivery.',
+                    'ar' => 'مشاوي ومطبخ حي مع صحون مشوية وأطباق مريحة للتوصيل.',
                 ],
-                'keywords' => ['en' => ['grocery', 'fresh', 'bakery'], 'ar' => ['بقالة', 'طازج', 'مخبوزات']],
-                'social_media' => ['instagram' => '@greenbasket', 'x' => '@greenbasket'],
+                'keywords' => ['en' => ['restaurant', 'grill', 'delivery'], 'ar' => ['مطعم', 'مشاوي', 'توصيل']],
+                'social_media' => ['instagram' => '@spiceroutekitchen', 'x' => '@spiceroutekitchen'],
                 'phone' => '+966500000000',
                 'password' => 'password',
                 'is_active' => true,
@@ -34,12 +35,12 @@ class DemoStoreWithInventorySeeder extends Seeder
         );
 
         $storeCategory = StoreCategory::query()->firstOrCreate(
-            ['name->en' => 'Groceries & Supermarket'],
+            ['name->en' => 'Restaurants & Cafés'],
             [
-                'name' => ['en' => 'Groceries & Supermarket', 'ar' => 'بقالة وسوبرماركت'],
+                'name' => ['en' => 'Restaurants & Cafés', 'ar' => 'مطاعم ومقاهي'],
                 'description' => [
-                    'en' => 'Food, daily essentials, and household supplies.',
-                    'ar' => 'مواد غذائية واحتياجات يومية ومستلزمات منزلية.',
+                    'en' => 'Dining, takeaway, and cafe-style food.',
+                    'ar' => 'طعام للمطاعم والطلب الخارجي والمقاهي.',
                 ],
                 'parent_id' => null,
             ],
@@ -48,6 +49,7 @@ class DemoStoreWithInventorySeeder extends Seeder
         $store->storeCategories()->syncWithoutDetaching([$storeCategory->id]);
 
         $branches = $this->seedBranches($store);
+        $this->seedCashiers($branches);
 
         Auth::guard('store')->login($store);
 
@@ -64,9 +66,9 @@ class DemoStoreWithInventorySeeder extends Seeder
     private function seedBranches(Store $store): array
     {
         $primary = Branch::query()->updateOrCreate(
-            ['store_id' => $store->id, 'name->en' => 'Al Olaya — Main Branch'],
+            ['store_id' => $store->id, 'name->en' => 'Al Olaya — Flagship Dining'],
             [
-                'name' => ['en' => 'Al Olaya — Main Branch', 'ar' => 'العلياء — الفرع الرئيسي'],
+                'name' => ['en' => 'Al Olaya — Flagship Dining', 'ar' => 'العلياء — المطعم الرئيسي'],
                 'address' => ['en' => 'King Fahd Rd, Al Olaya, Riyadh', 'ar' => 'طريق الملك فهد، العلياء، الرياض'],
                 'delivery_time_from' => 25,
                 'delivery_time_to' => 45,
@@ -79,9 +81,9 @@ class DemoStoreWithInventorySeeder extends Seeder
         );
 
         $secondary = Branch::query()->updateOrCreate(
-            ['store_id' => $store->id, 'name->en' => 'Al Malaz — City Branch'],
+            ['store_id' => $store->id, 'name->en' => 'Al Malaz — Express Kitchen'],
             [
-                'name' => ['en' => 'Al Malaz — City Branch', 'ar' => 'الملز — فرع المدينة'],
+                'name' => ['en' => 'Al Malaz — Express Kitchen', 'ar' => 'الملز — مطبخ سريع'],
                 'address' => ['en' => 'Al Malaz district, Riyadh', 'ar' => 'حي الملز، الرياض'],
                 'delivery_time_from' => 30,
                 'delivery_time_to' => 55,
@@ -99,43 +101,69 @@ class DemoStoreWithInventorySeeder extends Seeder
     /**
      * @param  array{primary: Branch, secondary: Branch}  $branches
      */
+    private function seedCashiers(array $branches): void
+    {
+        Cashier::query()->updateOrCreate(
+            ['email' => 'cashier.olaya@demo.com'],
+            [
+                'name' => 'Demo Cashier — Al Olaya',
+                'phone_number' => '+966501111111',
+                'password' => 'password',
+                'branch_id' => $branches['primary']->id,
+            ],
+        );
+
+        Cashier::query()->updateOrCreate(
+            ['email' => 'cashier.malaz@demo.com'],
+            [
+                'name' => 'Demo Cashier — Al Malaz',
+                'phone_number' => '+966502222222',
+                'password' => 'password',
+                'branch_id' => $branches['secondary']->id,
+            ],
+        );
+    }
+
+    /**
+     * @param  array{primary: Branch, secondary: Branch}  $branches
+     */
     private function seedCategoriesAndProducts(Store $store, array $branches): void
     {
         $categoryDefinitions = [
-            'Fresh Produce' => [
-                ['Bananas (1 kg)', 8.50, 10.00],
-                ['Tomatoes (1 kg)', 7.00, 8.50],
-                ['Cucumbers (1 kg)', 6.50, 7.50],
-                ['Baby Spinach (250 g)', 9.75, 12.00],
-                ['Mixed Salad Box', 11.50, 13.50],
+            'Starters & Salads' => [
+                ['Hummus & Warm Pita', 18.00, 22.00],
+                ['Fattoush Salad', 22.00, 26.00],
+                ['Lentil Soup', 16.00, 19.00],
+                ['Crispy Calamari', 32.00, 38.00],
+                ['Cheese Sambousek (4 pcs)', 24.00, 28.00],
             ],
-            'Dairy & Eggs' => [
-                ['Fresh Milk (1 L)', 6.25, 7.00],
-                ['Greek Yogurt (500 g)', 12.50, 14.00],
-                ['Cheddar Cheese Slices', 15.00, 18.00],
-                ['Free-range Eggs (12 pcs)', 14.75, 16.50],
-                ['Butter (200 g)', 9.95, 11.50],
+            'Signature Mains' => [
+                ['Grilled Chicken Platter', 45.00, 52.00],
+                ['Lamb Kabsa (single)', 55.00, 62.00],
+                ['Butter Chicken with Rice', 42.00, 48.00],
+                ['Mixed Grill for Two', 120.00, 135.00],
+                ['Sea Bass Sayadiyah', 68.00, 78.00],
             ],
-            'Bakery' => [
-                ['Sourdough Bread', 14.00, 16.00],
-                ['Whole Wheat Toast', 11.50, 13.00],
-                ['Croissants (4 pcs)', 18.00, 20.00],
-                ['Chocolate Muffins (4 pcs)', 17.50, 19.50],
-                ['Mini Kunafa Bites', 22.00, 25.00],
+            'Burgers & Sandwiches' => [
+                ['Classic Beef Burger', 35.00, 40.00],
+                ['Spicy Chicken Burger', 32.00, 37.00],
+                ['Mushroom Swiss Burger', 38.00, 43.00],
+                ['Falafel Wrap', 22.00, 26.00],
+                ['Kids Cheeseburger Meal', 28.00, 32.00],
             ],
-            'Beverages' => [
-                ['Still Water (12 x 330 ml)', 18.00, 20.00],
-                ['Sparkling Water (6 x 250 ml)', 16.50, 19.00],
-                ['Cold Brew Coffee (250 ml)', 13.00, 15.00],
-                ['Orange Juice (1 L)', 12.25, 14.00],
-                ['Mint Lemonade (500 ml)', 10.50, 12.00],
+            'Sides & Add-ons' => [
+                ['Truffle Parmesan Fries', 22.00, 26.00],
+                ['Garlic Naan (2 pcs)', 12.00, 14.00],
+                ['Seasoned Rice', 15.00, 18.00],
+                ['Grilled Vegetables', 20.00, 24.00],
+                ['Tahini Sauce Tub', 8.00, 10.00],
             ],
-            'Snacks' => [
-                ['Sea Salt Potato Chips', 7.50, 9.00],
-                ['Roasted Almonds (250 g)', 22.00, 25.00],
-                ['Dark Chocolate Bar (70%)', 9.50, 11.00],
-                ['Granola Bars (6 pcs)', 14.00, 16.00],
-                ['Mixed Nuts Cup', 8.75, 10.00],
+            'Drinks & Desserts' => [
+                ['Fresh Lemon Mint', 14.00, 17.00],
+                ['Jallab', 16.00, 19.00],
+                ['Karak Chai', 10.00, 12.00],
+                ['Kunafa Slice', 24.00, 28.00],
+                ['Vanilla Ice Cream Sundae', 18.00, 22.00],
             ],
         ];
 
@@ -145,8 +173,8 @@ class DemoStoreWithInventorySeeder extends Seeder
                 [
                     'name' => ['en' => $categoryNameEn, 'ar' => $this->toArabicCategoryName($categoryNameEn)],
                     'description' => [
-                        'en' => "Browse {$categoryNameEn} from our daily selection.",
-                        'ar' => 'تسوق من تشكيلتنا اليومية.',
+                        'en' => "Explore {$categoryNameEn} from our kitchen.",
+                        'ar' => 'اكتشف أطباقنا من مطبخنا.',
                     ],
                     'is_active' => true,
                 ],
@@ -162,12 +190,12 @@ class DemoStoreWithInventorySeeder extends Seeder
                     [
                         'name' => ['en' => $productNameEn, 'ar' => $this->toArabicProductName($productNameEn)],
                         'description' => [
-                            'en' => 'Freshly stocked and packed for delivery.',
-                            'ar' => 'متوفر يومياً ومجهز للتوصيل.',
+                            'en' => 'Prepared to order and packed hot for delivery.',
+                            'ar' => 'يُحضر عند الطلب ويُعبأ ساخناً للتوصيل.',
                         ],
                         'keywords' => [
-                            'en' => [$categoryNameEn, 'daily essentials', 'green basket'],
-                            'ar' => ['احتياجات يومية', 'السلة الخضراء'],
+                            'en' => [$categoryNameEn, 'delivery', 'spice route kitchen'],
+                            'ar' => ['مطعم', 'مطبخ طريق التوابل'],
                         ],
                         'price' => $price,
                         'compare_price' => $comparePrice,
@@ -197,11 +225,11 @@ class DemoStoreWithInventorySeeder extends Seeder
     private function toArabicCategoryName(string $categoryNameEn): string
     {
         return match ($categoryNameEn) {
-            'Fresh Produce' => 'خضار وفواكه',
-            'Dairy & Eggs' => 'ألبان وبيض',
-            'Bakery' => 'مخبوزات',
-            'Beverages' => 'مشروبات',
-            'Snacks' => 'وجبات خفيفة',
+            'Starters & Salads' => 'مقبلات وسلطات',
+            'Signature Mains' => 'أطباق رئيسية مميزة',
+            'Burgers & Sandwiches' => 'برجر وساندويش',
+            'Sides & Add-ons' => 'إضافات وجوانب',
+            'Drinks & Desserts' => 'مشروبات وحلويات',
             default => $categoryNameEn,
         };
     }
@@ -209,31 +237,31 @@ class DemoStoreWithInventorySeeder extends Seeder
     private function toArabicProductName(string $productNameEn): string
     {
         return match ($productNameEn) {
-            'Bananas (1 kg)' => 'موز (1 كجم)',
-            'Tomatoes (1 kg)' => 'طماطم (1 كجم)',
-            'Cucumbers (1 kg)' => 'خيار (1 كجم)',
-            'Baby Spinach (250 g)' => 'سبانخ صغيرة (250 جم)',
-            'Mixed Salad Box' => 'علبة سلطة مشكلة',
-            'Fresh Milk (1 L)' => 'حليب طازج (1 لتر)',
-            'Greek Yogurt (500 g)' => 'زبادي يوناني (500 جم)',
-            'Cheddar Cheese Slices' => 'شرائح جبن شيدر',
-            'Free-range Eggs (12 pcs)' => 'بيض بلدي (12 حبة)',
-            'Butter (200 g)' => 'زبدة (200 جم)',
-            'Sourdough Bread' => 'خبز ساوردو',
-            'Whole Wheat Toast' => 'توست قمح كامل',
-            'Croissants (4 pcs)' => 'كرواسون (4 قطع)',
-            'Chocolate Muffins (4 pcs)' => 'مافن شوكولاتة (4 قطع)',
-            'Mini Kunafa Bites' => 'لقيمات كنافة صغيرة',
-            'Still Water (12 x 330 ml)' => 'مياه (12 × 330 مل)',
-            'Sparkling Water (6 x 250 ml)' => 'مياه غازية (6 × 250 مل)',
-            'Cold Brew Coffee (250 ml)' => 'قهوة كولد برو (250 مل)',
-            'Orange Juice (1 L)' => 'عصير برتقال (1 لتر)',
-            'Mint Lemonade (500 ml)' => 'ليمون بالنعناع (500 مل)',
-            'Sea Salt Potato Chips' => 'شيبس ملح بحري',
-            'Roasted Almonds (250 g)' => 'لوز محمص (250 جم)',
-            'Dark Chocolate Bar (70%)' => 'شوكولاتة داكنة (70%)',
-            'Granola Bars (6 pcs)' => 'ألواح جرانولا (6 قطع)',
-            'Mixed Nuts Cup' => 'كوب مكسرات مشكلة',
+            'Hummus & Warm Pita' => 'حمص وخبز بيتا دافئ',
+            'Fattoush Salad' => 'سلطة فتوش',
+            'Lentil Soup' => 'شوربة عدس',
+            'Crispy Calamari' => 'كاليماري مقرمش',
+            'Cheese Sambousek (4 pcs)' => 'سمبوسة جبن (4 قطع)',
+            'Grilled Chicken Platter' => 'صحن دجاج مشوي',
+            'Lamb Kabsa (single)' => 'كبسة لحم (وجبة فردية)',
+            'Butter Chicken with Rice' => 'دجاج بالزبدة مع أرز',
+            'Mixed Grill for Two' => 'مشاوي مشكلة لشخصين',
+            'Sea Bass Sayadiyah' => 'قاروص سيدية',
+            'Classic Beef Burger' => 'برجر لحم كلاسيكي',
+            'Spicy Chicken Burger' => 'برجر دجاج حار',
+            'Mushroom Swiss Burger' => 'برجر فطر وجبن سويسري',
+            'Falafel Wrap' => 'راب فلافل',
+            'Kids Cheeseburger Meal' => 'وجبة برجر جبن للأطفال',
+            'Truffle Parmesan Fries' => 'بطاطس بارميزان بالكمأة',
+            'Garlic Naan (2 pcs)' => 'خبز نان بالثوم (قطعتان)',
+            'Seasoned Rice' => 'أرز بالتوابل',
+            'Grilled Vegetables' => 'خضار مشوية',
+            'Tahini Sauce Tub' => 'علبة صلصة طحينة',
+            'Fresh Lemon Mint' => 'ليمون ونعناع طازج',
+            'Jallab' => 'جلاب',
+            'Karak Chai' => 'شاي كرك',
+            'Kunafa Slice' => 'قطعة كنافة',
+            'Vanilla Ice Cream Sundae' => 'آيس كريم فانيليا سنداي',
             default => $productNameEn,
         };
     }

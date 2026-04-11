@@ -28,7 +28,7 @@ class ProductResource extends JsonResource
             'price' => $pivot?->price ?? $this->price,
             'compare_price' => $pivot?->compare_price ?? $this->compare_price,
             'quantity' => $pivot?->quantity ?? null,
-            'image' => $this->getFirstMediaUrl('product_images') ?: null,
+            'image' => "https://img.freepik.com/free-photo/top-view-table-full-food_23-2149209253.jpg?semt=ais_incoming&w=740&q=80",// $this->getFirstMediaUrl('product_images') ?: null,
         ];
     }
 }

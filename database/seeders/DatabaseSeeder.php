@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        $this->call(DemoStoreWithInventorySeeder::class);
+        $this->call([
+            DemoStoreWithInventorySeeder::class,
+            HomePageSectionsSeeder::class,
+        ]);
     }
 }
