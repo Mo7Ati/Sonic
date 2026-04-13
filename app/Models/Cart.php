@@ -2,58 +2,125 @@
 
 namespace App\Models;
 
-use Auth;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Http\Request;
 
 class Cart extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'user_id',
-        'product_id',
-        'quantity',
-        'cookie_id',
-
-
+        'customer_id',
+        'session_id',
+        'branch_id',
     ];
 
-    protected static function booted()
+    public function customer(): BelongsTo
     {
-
-        static::creating(function (Cart $cart) {
-            $cart->id = Str::uuid();
-        });
-
-        static::addGlobalScope('cookie_id', function (Builder $builder) {
-            $user_id = Auth::id();
-            if (!$user_id) {
-                $builder->where('cookie_id', static::getCookieId())
-                    ->whereNull('user_id');
-            } else {
-                $builder->where('cookie_id', static::getCookieId())
-                    ->where('user_id', $user_id);
-            }
-        });
+        return $this->belongsTo(Customer::class);
     }
 
-    
-    public static function getCookieId()
+    public function branch(): BelongsTo
     {
-        $cookie_id = Cookie::get('cart');
-        if (!$cookie_id) {
-            $cookie_id = Str::uuid();
-            Cookie::queue('cart', $cookie_id, 60 * 24 * 30);
+        return $this->belongsTo(Branch::class);
+    }
 
+    public function items(): HasMany
+    {
+        return $this->hasMany(CartItem::class);
+    }
+
+    public function getItemsCountAttribute(): int
+    {
+        return $this->items->sum('quantity');
+    }
+
+    public function getSubtotalAttribute(): float
+    {
+        return $this->items->sum('total_price');
+    }
+
+    /**
+     * Resolve the current cart for the request — authenticated customer or guest session.
+     */
+    public static function resolveFor(Request $request): ?self
+    {
+        if ($request->user()) {
+            return static::where('customer_id', $request->user()->id)
+                ->first();
         }
 
-        return $cookie_id;
+        $sessionId = $request->header('X-Session-Id');
+
+        if ($sessionId) {
+            return static::where('session_id', $sessionId)->first();
+        }
+
+        return null;
     }
 
-    public function product()
+    /**
+     * Find or create a cart for the current request context.
+     */
+    public static function resolveOrCreateFor(Request $request, int $branchId): self
     {
-        return $this->belongsTo(Product::class, 'product_id', 'id');
+        if ($request->user()) {
+            return static::firstOrCreate(
+                ['customer_id' => $request->user()->id],
+                ['branch_id' => $branchId],
+            );
+        }
+
+        $sessionId = $request->header('X-Session-Id');
+
+        return static::firstOrCreate(
+            ['session_id' => $sessionId],
+            ['branch_id' => $branchId],
+        );
+    }
+
+    /**
+     * Merge a guest session cart into an authenticated customer's cart.
+     * Transfers items to the customer cart or creates one from the guest cart.
+     */
+    public static function mergeGuestCart(string $sessionId, int $customerId): void
+    {
+        $guestCart = static::where('session_id', $sessionId)->first();
+
+        if (! $guestCart) {
+            return;
+        }
+
+        $customerCart = static::where('customer_id', $customerId)->first();
+
+        if (! $customerCart) {
+            $guestCart->update([
+                'customer_id' => $customerId,
+                'session_id' => null,
+            ]);
+
+            return;
+        }
+
+        if ($guestCart->branch_id === $customerCart->branch_id) {
+            $guestCart->items->each(function (CartItem $guestItem) use ($customerCart) {
+                $customerCart->items()->create($guestItem->only([
+                    'product_id',
+                    'quantity',
+                    'unit_price',
+                    'options_data',
+                    'options_amount',
+                    'additions_data',
+                    'additions_amount',
+                    'total_price',
+                ]));
+            });
+        }
+
+        $guestCart->items()->delete();
+        $guestCart->delete();
     }
 }

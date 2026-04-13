@@ -8,7 +8,8 @@
       "Bash(php artisan:*)",
       "Bash(vendor/bin/pint --dirty --format agent)",
       "WebFetch(domain:laraveldaily.com)",
-      "Bash(xargs -I {} find {} -maxdepth 1 -type d)"
+      "Bash(xargs -I {} find {} -maxdepth 1 -type d)",
+      "Bash(npx expo:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

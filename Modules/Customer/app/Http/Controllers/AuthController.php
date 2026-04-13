@@ -3,6 +3,7 @@
 namespace Modules\Customer\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use App\Models\Customer;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
@@ -51,6 +52,11 @@ class AuthController extends Controller
         }
 
         $customer->update(['last_seen_at' => now()]);
+
+        $sessionId = $request->header('X-Session-Id');
+        if ($sessionId) {
+            Cart::mergeGuestCart($sessionId, $customer->id);
+        }
 
         $token = $customer->createToken('customer-token')->plainTextToken;
 
