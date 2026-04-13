@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Customer\Http\Controllers\BranchesController;
 use Modules\Customer\Http\Controllers\HomeController;
+use Modules\Customer\Http\Controllers\ProductsController;
 use Modules\Customer\Http\Controllers\StoreCategoriesController;
 
 Route::prefix('customer')->group(function () {
@@ -16,4 +17,7 @@ Route::prefix('customer')->group(function () {
     // Branches
     Route::get('branches', [BranchesController::class, 'index']);
     Route::get('branches/{id}', [BranchesController::class, 'show']);
+
+    // Products
+    Route::get('products/{id}', [ProductsController::class, 'show']);
 });

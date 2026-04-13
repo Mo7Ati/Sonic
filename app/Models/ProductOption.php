@@ -9,6 +9,8 @@ class ProductOption extends Pivot
 {
     public $incrementing = true;
 
+    public $timestamps = false;
+
     protected $table = 'product_options';
 
     protected $casts = [
