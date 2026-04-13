@@ -71,6 +71,12 @@ return [
         'quantity' => 'الكمية',
         'accepted' => 'مقبول',
         'accepted_helper' => 'عند التفعيل يُعتبر المنتج معتمداً للبيع (حسب قواعد المنصة).',
+        'options' => 'خيارات المنتج',
+        'options_description' => 'ربط الخيارات مع تسعير وتوفر خاص بكل منتج.',
+        'option' => 'الخيار',
+        'option_available' => 'متوفر',
+        'add_option' => 'إضافة خيار',
+        'ungrouped' => 'بدون مجموعة',
     ],
     'categories' => [
         'content' => 'تفاصيل التصنيف',
@@ -84,11 +90,14 @@ return [
         'visibility' => 'الظهور',
         'visibility_description' => 'الإضافات غير النشطة تبقى مخفية عن العملاء.',
     ],
-    'options' => [
-        'content' => 'تفاصيل الخيار',
-        'content_description' => 'اسم مجموعة التنويع (مثل الحجم أو مستوى التوابل).',
+    'option_groups' => [
+        'content' => 'تفاصيل المجموعة',
+        'content_description' => 'اسم مجموعة الخيارات (مثل الحجم أو مستوى التوابل).',
         'visibility' => 'الظهور',
-        'visibility_description' => 'الخيارات غير النشطة تبقى مخفية عن العملاء.',
+        'visibility_description' => 'المجموعات غير النشطة تبقى مخفية عن العملاء.',
+        'options' => 'الخيارات',
+        'options_description' => 'القيم التابعة لهذه المجموعة.',
+        'add_option' => 'إضافة خيار',
     ],
     'groups' => [
         'heading' => 'تفاصيل المجموعة',

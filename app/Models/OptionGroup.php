@@ -4,19 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Spatie\Translatable\HasTranslations;
 
-#[Fillable(['name', 'option_group_id', 'store_id', 'is_active'])]
-class Option extends Model
+#[Fillable(['name', 'store_id'])]
+class OptionGroup extends Model
 {
     use HasTranslations, SoftDeletes;
 
     protected $casts = [
         'name' => 'array',
-        'is_active' => 'boolean',
     ];
 
     public array $translatable = ['name'];
@@ -33,33 +32,20 @@ class Option extends Model
         return $this->belongsTo(Store::class);
     }
 
-    public function optionGroup(): BelongsTo
+    public function options(): HasMany
     {
-        return $this->belongsTo(OptionGroup::class);
-    }
-
-    public function products()
-    {
-        return $this->belongsToMany(Product::class, 'product_options', 'option_id', 'product_id');
+        return $this->hasMany(Option::class);
     }
 
     public function scopeSearch($query, $search)
     {
-        return $query->when($search, function ($query) use ($search) {
-            $query->where('name', 'LIKE', "%{$search}%");
-        });
-    }
-
-    public function scopeActive($query, $value = true)
-    {
-        return $query->where('is_active', $value);
+        return $query->where('name', 'LIKE', "%{$search}%");
     }
 
     public function scopeApplyFilters($query, Request $request)
     {
         return $query
             ->when($request->input('search'), fn ($q, $search) => $q->search($search))
-            ->when($request->filled('is_active'), fn ($q) => $q->active($request->input('is_active')))
             ->orderBy($request->input('sort', 'id'), $request->input('direction', 'desc'));
     }
 }

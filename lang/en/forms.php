@@ -71,6 +71,12 @@ return [
         'quantity' => 'Quantity',
         'accepted' => 'Accepted',
         'accepted_helper' => 'When on, the product is approved for sale (subject to platform rules).',
+        'options' => 'Product options',
+        'options_description' => 'Attach options with per-product pricing and availability.',
+        'option' => 'Option',
+        'option_available' => 'Available',
+        'add_option' => 'Add option',
+        'ungrouped' => 'Ungrouped',
     ],
     'categories' => [
         'content' => 'Category details',
@@ -84,11 +90,14 @@ return [
         'visibility' => 'Visibility',
         'visibility_description' => 'Inactive additions are hidden from customers.',
     ],
-    'options' => [
-        'content' => 'Option details',
-        'content_description' => 'Name for a variant group (e.g. size, spice level).',
+    'option_groups' => [
+        'content' => 'Group details',
+        'content_description' => 'Name for the option group (e.g. Size, Spice level).',
         'visibility' => 'Visibility',
-        'visibility_description' => 'Inactive options are hidden from customers.',
+        'visibility_description' => 'Inactive groups are hidden from customers.',
+        'options' => 'Options',
+        'options_description' => 'Values that belong to this group.',
+        'add_option' => 'Add option',
     ],
     'groups' => [
         'heading' => 'Group details',

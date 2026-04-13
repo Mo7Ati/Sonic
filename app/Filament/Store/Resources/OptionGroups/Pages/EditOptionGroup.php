@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Filament\Store\Resources\Options\Pages;
+namespace App\Filament\Store\Resources\OptionGroups\Pages;
 
-use App\Filament\Store\Resources\Options\OptionResource;
+use App\Filament\Store\Resources\OptionGroups\OptionGroupResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
 
-class EditOption extends EditRecord
+class EditOptionGroup extends EditRecord
 {
-    protected static string $resource = OptionResource::class;
+    protected static string $resource = OptionGroupResource::class;
 
     protected function getHeaderActions(): array
     {

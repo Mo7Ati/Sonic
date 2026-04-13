@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
@@ -76,7 +77,12 @@ class Product extends Model implements HasMedia
             'product_options',
             'product_id',
             'option_id'
-        )->withPivot('price');
+        )->withPivot(['price', 'is_available', 'quantity']);
+    }
+
+    public function productOptions(): HasMany
+    {
+        return $this->hasMany(ProductOption::class);
     }
 
     public function branches(): BelongsToMany
@@ -89,11 +95,11 @@ class Product extends Model implements HasMedia
     public function scopeApplyFilters(Builder $query, Request $request)
     {
         return $query
-            ->when($request->filled('is_active'), fn($q) => $q->active($request->input('is_active')))
-            ->when($request->filled('is_accepted'), fn($q) => $q->accepted($request->input('is_accepted')))
-            ->when($request->input('search'), fn($q, $search) => $q->search($search))
-            ->when($request->float('minPrice'), fn($q, $minPrice) => $q->where('price', '>=', $minPrice))
-            ->when($request->float('maxPrice'), fn($q, $maxPrice) => $q->where('price', '<=', $maxPrice))
+            ->when($request->filled('is_active'), fn ($q) => $q->active($request->input('is_active')))
+            ->when($request->filled('is_accepted'), fn ($q) => $q->accepted($request->input('is_accepted')))
+            ->when($request->input('search'), fn ($q, $search) => $q->search($search))
+            ->when($request->float('minPrice'), fn ($q, $minPrice) => $q->where('price', '>=', $minPrice))
+            ->when($request->float('maxPrice'), fn ($q, $maxPrice) => $q->where('price', '<=', $maxPrice))
             ->orderBy($request->input('sort', 'id'), $request->input('direction', 'desc'));
     }
 

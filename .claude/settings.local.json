@@ -6,7 +6,8 @@
       "Bash(grep -r \"laravel/socialite\" /c/Projects/Sonic/Sonic/composer*)",
       "mcp__laravel-boost__search-docs",
       "Bash(php artisan:*)",
-      "Bash(vendor/bin/pint --dirty --format agent)"
+      "Bash(vendor/bin/pint --dirty --format agent)",
+      "WebFetch(domain:laraveldaily.com)"
     ]
   },
   "enableAllProjectMcpServers": true,

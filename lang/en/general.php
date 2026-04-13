@@ -13,7 +13,7 @@ return [
         'products' => 'Products',
         'categories' => 'Categories',
         'additions' => 'Additions',
-        'options' => 'Options',
+        'option_groups' => 'Option groups',
     ],
     'navigation_groups' => [
         'Management' => 'Management',
@@ -33,7 +33,7 @@ return [
         'products' => 'Products',
         'categories' => 'Categories',
         'additions' => 'Additions',
-        'options' => 'Options',
+        'option_groups' => 'Option groups',
     ],
     'model_labels' => [
         'admin' => 'Admin',
@@ -47,6 +47,7 @@ return [
         'category' => 'Category',
         'addition' => 'Addition',
         'option' => 'Option',
+        'option_group' => 'Option group',
     ],
     'settings' => [
         'platform_settings' => 'Platform Settings',

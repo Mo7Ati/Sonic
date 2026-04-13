@@ -4,6 +4,8 @@ namespace App\Filament\Store\Resources\Products\Schemas;
 
 use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
 use App\Models\Category;
+use App\Models\Option;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -82,6 +84,53 @@ class ProductForm
 
                             ])
                             ->columnSpan(2),
+                    ])
+                    ->columnSpanFull(),
+                Section::make(__('forms.products.options'))
+                    ->description(__('forms.products.options_description'))
+                    ->schema([
+                        Repeater::make('productOptions')
+                            ->relationship()
+                            ->schema([
+                                Select::make('option_id')
+                                    ->label(__('forms.products.option'))
+                                    ->options(
+                                        Option::query()
+                                            ->where('store_id', auth()->guard('store')->id())
+                                            ->where('is_active', true)
+                                            ->with('optionGroup')
+                                            ->get()
+                                            ->groupBy(fn ($option) => $option->optionGroup?->getTranslation('name', app()->getLocale()) ?? __('forms.products.ungrouped'))
+                                            ->map(fn ($options) => $options->pluck('name', 'id'))
+                                            ->toArray()
+                                    )
+                                    ->searchable()
+                                    ->preload()
+                                    ->required()
+                                    ->distinct(),
+                                TextInput::make('price')
+                                    ->label(__('forms.products.price'))
+                                    ->numeric()
+                                    ->required()
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->default(0)
+                                    ->prefix(__('forms.branches.currency_prefix')),
+                                Toggle::make('is_available')
+                                    ->label(__('forms.products.option_available'))
+                                    ->default(true),
+                                TextInput::make('quantity')
+                                    ->label(__('forms.products.quantity'))
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->maxValue(65535)
+                                    ->nullable(),
+                            ])
+                            ->columns(4)
+                            ->defaultItems(0)
+                            ->addActionLabel(__('forms.products.add_option'))
+                            ->collapsible()
+                            ->itemLabel(fn (array $state): ?string => Option::find($state['option_id'] ?? null)?->getTranslation('name', app()->getLocale())),
                     ])
                     ->columnSpanFull(),
             ]);

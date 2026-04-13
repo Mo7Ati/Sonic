@@ -50,4 +50,7 @@ return [
     'options' => [
         'products_count' => 'Products Count',
     ],
+    'option_groups' => [
+        'options_count' => 'Options Count',
+    ],
 ];

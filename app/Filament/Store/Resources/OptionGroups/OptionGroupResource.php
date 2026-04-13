@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Store\Resources\Options;
+namespace App\Filament\Store\Resources\OptionGroups;
 
-use App\Filament\Store\Resources\Options\Pages\CreateOption;
-use App\Filament\Store\Resources\Options\Pages\EditOption;
-use App\Filament\Store\Resources\Options\Pages\ListOptions;
-use App\Filament\Store\Resources\Options\Schemas\OptionForm;
-use App\Filament\Store\Resources\Options\Tables\OptionsTable;
-use App\Models\Option;
+use App\Filament\Store\Resources\OptionGroups\Pages\CreateOptionGroup;
+use App\Filament\Store\Resources\OptionGroups\Pages\EditOptionGroup;
+use App\Filament\Store\Resources\OptionGroups\Pages\ListOptionGroups;
+use App\Filament\Store\Resources\OptionGroups\Schemas\OptionGroupForm;
+use App\Filament\Store\Resources\OptionGroups\Tables\OptionGroupsTable;
+use App\Models\OptionGroup;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -16,22 +16,22 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class OptionResource extends Resource
+class OptionGroupResource extends Resource
 {
-    protected static ?string $model = Option::class;
+    protected static ?string $model = OptionGroup::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAdjustmentsHorizontal;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleGroup;
 
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema
     {
-        return OptionForm::configure($schema);
+        return OptionGroupForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return OptionsTable::configure($table);
+        return OptionGroupsTable::configure($table);
     }
 
     public static function getRelations(): array
@@ -44,9 +44,9 @@ class OptionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListOptions::route('/'),
-            'create' => CreateOption::route('/create'),
-            'edit' => EditOption::route('/{record}/edit'),
+            'index' => ListOptionGroups::route('/'),
+            'create' => CreateOptionGroup::route('/create'),
+            'edit' => EditOptionGroup::route('/{record}/edit'),
         ];
     }
 
@@ -66,17 +66,17 @@ class OptionResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('general.model_labels.option');
+        return __('general.model_labels.option_group');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('general.plural_model_labels.options');
+        return __('general.plural_model_labels.option_groups');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('general.nav_labels.options');
+        return __('general.nav_labels.option_groups');
     }
 
     public static function getNavigationGroup(): string

@@ -10,13 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('options', function (Blueprint $table) {
+        Schema::create('option_groups', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('option_group_id')->constrained('option_groups')->cascadeOnDelete();
-
             $table->json('name');
             $table->foreignId('store_id')->constrained('stores');
-            $table->boolean('is_active')->default(true);
+
             $table->softDeletes();
             $table->timestamps();
         });
@@ -27,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('options');
+        Schema::dropIfExists('option_groups');
     }
 };

@@ -50,4 +50,7 @@ return [
     'options' => [
         'products_count' => 'عدد المنتجات',
     ],
+    'option_groups' => [
+        'options_count' => 'عدد الخيارات',
+    ],
 ];

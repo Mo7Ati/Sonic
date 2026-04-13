@@ -13,7 +13,7 @@ return [
         'products' => 'المنتجات',
         'categories' => 'التصنيفات',
         'additions' => 'الإضافات',
-        'options' => 'الخيارات',
+        'option_groups' => 'مجموعات الخيارات',
     ],
     'navigation_groups' => [
         'Management' => 'الإدارة',
@@ -33,7 +33,7 @@ return [
         'products' => 'المنتجات',
         'categories' => 'التصنيفات',
         'additions' => 'الإضافات',
-        'options' => 'الخيارات',
+        'option_groups' => 'مجموعات الخيارات',
     ],
 
     'model_labels' => [
@@ -48,6 +48,7 @@ return [
         'category' => 'تصنيف',
         'addition' => 'إضافة',
         'option' => 'خيار',
+        'option_group' => 'مجموعة خيارات',
     ],
 
     'settings' => [

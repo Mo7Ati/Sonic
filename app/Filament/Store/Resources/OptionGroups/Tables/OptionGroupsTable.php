@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Store\Resources\Options\Tables;
+namespace App\Filament\Store\Resources\OptionGroups\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -13,7 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
-class OptionsTable
+class OptionGroupsTable
 {
     public static function configure(Table $table): Table
     {
@@ -22,9 +22,9 @@ class OptionsTable
                 TextColumn::make('name')
                     ->label(__('tables.common.name'))
                     ->searchable(),
-                TextColumn::make('products_count')
-                    ->label(__('tables.options.products_count'))
-                    ->counts('products')
+                TextColumn::make('options_count')
+                    ->label(__('tables.option_groups.options_count'))
+                    ->counts('options')
                     ->sortable(),
                 IconColumn::make('is_active')
                     ->label(__('tables.common.is_active'))
