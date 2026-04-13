@@ -7,7 +7,8 @@
       "mcp__laravel-boost__search-docs",
       "Bash(php artisan:*)",
       "Bash(vendor/bin/pint --dirty --format agent)",
-      "WebFetch(domain:laraveldaily.com)"
+      "WebFetch(domain:laraveldaily.com)",
+      "Bash(xargs -I {} find {} -maxdepth 1 -type d)"
     ]
   },
   "enableAllProjectMcpServers": true,
