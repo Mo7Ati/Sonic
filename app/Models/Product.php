@@ -85,6 +85,11 @@ class Product extends Model implements HasMedia
         return $this->hasMany(ProductOption::class);
     }
 
+    public function productAdditions(): HasMany
+    {
+        return $this->hasMany(ProductAddition::class);
+    }
+
     public function branches(): BelongsToMany
     {
         return $this->belongsToMany(Branch::class)
