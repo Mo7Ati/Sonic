@@ -18,6 +18,8 @@ class OrderResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingBag;
 
+    protected static ?int $navigationSort = 10;
+
     protected static ?string $recordTitleAttribute = 'id';
 
     public static function table(Table $table): Table
@@ -60,7 +62,7 @@ class OrderResource extends Resource
 
     public static function getNavigationGroup(): string
     {
-        return __('general.navigation_groups.store_management');
+        return __('general.navigation_groups.store_group_orders');
     }
 
     public static function canCreate(): bool

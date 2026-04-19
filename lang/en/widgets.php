@@ -62,6 +62,19 @@ return [
     |--------------------------------------------------------------------------
     */
     'store' => [
+        'overview_description' => 'Last 30 days compared with the previous 30 days. Sparklines show daily activity for your store.',
+
+        'trend_increase' => ':value% increase',
+        'trend_decrease' => ':value% decrease',
+        'trend_flat' => 'Flat vs prior period',
+
+        'orders_stat_description' => ':pending pending · :trend',
+        'snapshot_new_trend' => ':count new · :trend',
+
+        'money_m' => '$:amountM',
+        'money_k' => '$:amountk',
+        'money_full' => '$:amount',
+
         'period' => [
             'today' => 'Today',
             'week' => 'This week',
@@ -76,6 +89,8 @@ return [
             'new_customers' => 'New customers',
             'products' => 'Products',
             'total_products' => 'Total products',
+            'branches' => 'Branches',
+            'categories' => 'Categories',
         ],
 
         'revenue_vs' => [
@@ -100,8 +115,11 @@ return [
 
         'charts' => [
             'revenue_trend_heading' => 'Revenue trend',
+            'revenue_trend_description' => 'Daily order revenue for your store.',
             'orders_by_status_heading' => 'Orders by status',
+            'orders_by_status_description' => 'All-time distribution of order statuses for your store.',
             'top_products_heading' => 'Top products',
+            'top_products_description' => 'Units sold in your catalog (order line items).',
             'branch_performance_heading' => 'Branch performance',
         ],
     ],

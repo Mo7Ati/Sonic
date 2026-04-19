@@ -8,9 +8,16 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class StoreOrdersStatusWidget extends ChartWidget
 {
+    protected static ?int $sort = 11;
+
     public function getHeading(): string|Htmlable|null
     {
         return __('widgets.store.charts.orders_by_status_heading');
+    }
+
+    public function getDescription(): string|Htmlable|null
+    {
+        return __('widgets.store.charts.orders_by_status_description');
     }
 
     protected function getType(): string

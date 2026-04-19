@@ -8,6 +8,8 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class StoreBranchPerformanceWidget extends ChartWidget
 {
+    protected static bool $isDiscovered = false;
+
     public function getHeading(): string|Htmlable|null
     {
         return __('widgets.store.charts.branch_performance_heading');

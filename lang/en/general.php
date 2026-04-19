@@ -14,6 +14,7 @@ return [
         'categories' => 'Categories',
         'additions' => 'Additions',
         'option_groups' => 'Option groups',
+        'orders' => 'Orders',
     ],
     'navigation_groups' => [
         'Management' => 'Management',
@@ -21,6 +22,9 @@ return [
         'control_panel' => 'Control Panel',
         'mobile_application' => 'Mobile application',
         'store_management' => 'Store management',
+        'store_group_orders' => 'Orders',
+        'store_group_catalog' => 'Catalog',
+        'store_group_operations' => 'Branches & team',
     ],
     'plural_model_labels' => [
         'admins' => 'Admins',
@@ -34,6 +38,7 @@ return [
         'categories' => 'Categories',
         'additions' => 'Additions',
         'option_groups' => 'Option groups',
+        'orders' => 'Orders',
     ],
     'model_labels' => [
         'admin' => 'Admin',
@@ -48,6 +53,7 @@ return [
         'addition' => 'Addition',
         'option' => 'Option',
         'option_group' => 'Option group',
+        'order' => 'Order',
     ],
     'settings' => [
         'platform_settings' => 'Platform Settings',

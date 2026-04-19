@@ -47,6 +47,19 @@ return [
     ],
 
     'store' => [
+        'overview_description' => 'آخر 30 يومًا مقارنة بالـ 30 يومًا السابقة. الخطوط البيانية تعرض النشاط اليومي لمتجرك.',
+
+        'trend_increase' => 'زيادة :value٪',
+        'trend_decrease' => 'انخفاض :value٪',
+        'trend_flat' => 'مستقر مقارنة بالفترة السابقة',
+
+        'orders_stat_description' => ':pending قيد الانتظار · :trend',
+        'snapshot_new_trend' => ':count جديد · :trend',
+
+        'money_m' => '$:amountM',
+        'money_k' => '$:amountk',
+        'money_full' => '$:amount',
+
         'period' => [
             'today' => 'اليوم',
             'week' => 'هذا الأسبوع',
@@ -61,6 +74,8 @@ return [
             'new_customers' => 'عملاء جدد',
             'products' => 'المنتجات',
             'total_products' => 'إجمالي المنتجات',
+            'branches' => 'الفروع',
+            'categories' => 'التصنيفات',
         ],
 
         'revenue_vs' => [
@@ -85,8 +100,11 @@ return [
 
         'charts' => [
             'revenue_trend_heading' => 'اتجاه الإيرادات',
+            'revenue_trend_description' => 'إيرادات الطلبات اليومية لمتجرك.',
             'orders_by_status_heading' => 'الطلبات حسب الحالة',
+            'orders_by_status_description' => 'توزيع حالات الطلبات لمتجرك (كل الأوقات).',
             'top_products_heading' => 'أفضل المنتجات',
+            'top_products_description' => 'الوحدات المباعة في كتالوجك (بنود الطلب).',
             'branch_performance_heading' => 'أداء الفروع',
         ],
     ],

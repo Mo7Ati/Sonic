@@ -2,13 +2,10 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Store\Widgets\StoreBranchPerformanceWidget;
-use App\Filament\Store\Widgets\StoreCustomersWidget;
+use App\Filament\Store\Pages\StoreDashboard;
 use App\Filament\Store\Widgets\StoreOrdersStatusWidget;
-use App\Filament\Store\Widgets\StoreOrdersWidget;
-use App\Filament\Store\Widgets\StoreProductsWidget;
+use App\Filament\Store\Widgets\StoreOverviewStatsWidget;
 use App\Filament\Store\Widgets\StoreRevenueChartWidget;
-use App\Filament\Store\Widgets\StoreRevenueWidget;
 use App\Filament\Store\Widgets\StoreTopProductsWidget;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use CraftForge\FilamentLanguageSwitcher\FilamentLanguageSwitcherPlugin;
@@ -16,12 +13,10 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
+use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -43,23 +38,24 @@ class StorePanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Blue,
             ])
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label(fn (): string => __('general.navigation_groups.store_group_orders')),
+                NavigationGroup::make()
+                    ->label(fn (): string => __('general.navigation_groups.store_group_catalog')),
+                NavigationGroup::make()
+                    ->label(fn (): string => __('general.navigation_groups.store_group_operations')),
+            ])
             ->discoverResources(in: app_path('Filament/Store/Resources'), for: 'App\Filament\Store\Resources')
-            ->discoverPages(in: app_path('Filament/Store/Pages'), for: 'App\Filament\Store\Pages')
             ->pages([
-                Dashboard::class,
+                StoreDashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Store/Widgets'), for: 'App\Filament\Store\Widgets')
             ->widgets([
-                StoreRevenueWidget::class,
-                StoreOrdersWidget::class,
-                StoreCustomersWidget::class,
-                StoreProductsWidget::class,
+                StoreOverviewStatsWidget::class,
                 StoreRevenueChartWidget::class,
                 StoreOrdersStatusWidget::class,
                 StoreTopProductsWidget::class,
-                StoreBranchPerformanceWidget::class,
-                AccountWidget::class,
-                FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

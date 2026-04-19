@@ -8,9 +8,16 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class StoreTopProductsWidget extends ChartWidget
 {
+    protected static ?int $sort = 12;
+
     public function getHeading(): string|Htmlable|null
     {
         return __('widgets.store.charts.top_products_heading');
+    }
+
+    public function getDescription(): string|Htmlable|null
+    {
+        return __('widgets.store.charts.top_products_description');
     }
 
     protected function getType(): string

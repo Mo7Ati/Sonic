@@ -22,6 +22,8 @@ class BranchResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static ?int $navigationSort = 40;
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema
@@ -75,7 +77,6 @@ class BranchResource extends Resource
 
     public static function getNavigationGroup(): string
     {
-        return __('general.navigation_groups.store_management');
+        return __('general.navigation_groups.store_group_operations');
     }
-
 }

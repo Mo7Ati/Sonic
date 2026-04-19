@@ -14,6 +14,7 @@ return [
         'categories' => 'التصنيفات',
         'additions' => 'الإضافات',
         'option_groups' => 'مجموعات الخيارات',
+        'orders' => 'الطلبات',
     ],
     'navigation_groups' => [
         'Management' => 'الإدارة',
@@ -21,6 +22,9 @@ return [
         'control_panel' => 'لوحة التحكم',
         'mobile_application' => 'تطبيق الموبايل',
         'store_management' => 'إدارة المتجر',
+        'store_group_orders' => 'الطلبات',
+        'store_group_catalog' => 'الكتالوج',
+        'store_group_operations' => 'الفروع والفريق',
     ],
     'plural_model_labels' => [
         'admins' => 'المديرين',
@@ -34,6 +38,7 @@ return [
         'categories' => 'التصنيفات',
         'additions' => 'الإضافات',
         'option_groups' => 'مجموعات الخيارات',
+        'orders' => 'الطلبات',
     ],
 
     'model_labels' => [
@@ -49,6 +54,7 @@ return [
         'addition' => 'إضافة',
         'option' => 'خيار',
         'option_group' => 'مجموعة خيارات',
+        'order' => 'طلب',
     ],
 
     'settings' => [

@@ -22,6 +22,8 @@ class CategoryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
+    protected static ?int $navigationSort = 20;
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema
@@ -81,6 +83,6 @@ class CategoryResource extends Resource
 
     public static function getNavigationGroup(): string
     {
-        return __('general.navigation_groups.store_management');
+        return __('general.navigation_groups.store_group_catalog');
     }
 }

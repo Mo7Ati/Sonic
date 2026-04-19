@@ -9,11 +9,18 @@ use Illuminate\Support\Collection;
 
 class StoreRevenueChartWidget extends BaseChartWidget
 {
-    protected static ?int $sort = 5;
+    protected static ?int $sort = 10;
+
+    protected string $period = '30d';
 
     public function getHeading(): string|Htmlable|null
     {
         return __('widgets.store.charts.revenue_trend_heading');
+    }
+
+    public function getDescription(): string|Htmlable|null
+    {
+        return __('widgets.store.charts.revenue_trend_description');
     }
 
     protected function getType(): string

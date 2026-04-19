@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
+        // Optional (slow, ~1–2 min): php artisan db:seed --class=DashboardScreenshotMetricsSeeder
+        // Store panel (store@ps.com): php artisan db:seed --class=PsStoreDashboardMetricsSeeder
         $this->call([
             DemoStoreWithInventorySeeder::class,
             HomePageSectionsSeeder::class,

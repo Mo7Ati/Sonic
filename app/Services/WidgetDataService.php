@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\OrderStatusEnum;
 use App\Models\Branch;
+use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Product;
@@ -192,6 +193,75 @@ class WidgetDataService
     public function getStoreBranchPerformance(int|string $storeId): Collection
     {
         return $this->buildBranchPerformanceChart(storeId: $storeId);
+    }
+
+    public function getStoreRevenue30dStats(int|string $storeId): array
+    {
+        return $this->calculateRevenue($storeId, '30d');
+    }
+
+    public function getStoreOrders30dStats(int|string $storeId): array
+    {
+        return $this->calculateOrders($storeId, '30d');
+    }
+
+    public function getStoreCustomers30dStats(int|string $storeId): array
+    {
+        return $this->calculateCustomers($storeId, '30d');
+    }
+
+    /**
+     * @return array{total: int, new_current: int, new_previous: int, percentage_change: float}
+     */
+    public function getStoreBranchSnapshot30d(int|string $storeId): array
+    {
+        return $this->calculateBranchSnapshot30dForStore($storeId);
+    }
+
+    /**
+     * @return array{total: int, new_current: int, new_previous: int, percentage_change: float}
+     */
+    public function getStoreProductSnapshot30d(int|string $storeId): array
+    {
+        return $this->calculateProductSnapshot30dForStore($storeId);
+    }
+
+    /**
+     * @return array{total: int, new_current: int, new_previous: int, percentage_change: float}
+     */
+    public function getStoreCategorySnapshot30d(int|string $storeId): array
+    {
+        return $this->calculateCategorySnapshot30dForStore($storeId);
+    }
+
+    public function getStoreSparklineRevenueLast30Days(int|string $storeId): array
+    {
+        return $this->sparklineOrderRevenueLast30Days($storeId);
+    }
+
+    public function getStoreSparklineOrdersLast30Days(int|string $storeId): array
+    {
+        return $this->sparklineOrderCountsLast30Days($storeId);
+    }
+
+    public function getStoreSparklineCustomersLast30Days(int|string $storeId): array
+    {
+        return $this->sparklineNewCustomersForStoreLast30Days($storeId);
+    }
+
+    public function getStoreSparklineBranchesLast30Days(int|string $storeId): array
+    {
+        return $this->sparklineModelCountsLast30DaysForStore(Branch::class, $storeId);
+    }
+
+    public function getStoreSparklineProductsLast30Days(int|string $storeId): array
+    {
+        return $this->sparklineModelCountsLast30DaysForStore(Product::class, $storeId);
+    }
+
+    public function getStoreSparklineCategoriesLast30Days(int|string $storeId): array
+    {
+        return $this->sparklineModelCountsLast30DaysForStore(Category::class, $storeId);
     }
 
     /**
@@ -688,6 +758,107 @@ class WidgetDataService
         [$start, $end] = $this->last30DaysBounds();
 
         $raw = $modelClass::query()
+            ->whereBetween('created_at', [$start, $end])
+            ->selectRaw('DATE(created_at) as day, COUNT(*) as c')
+            ->groupBy('day')
+            ->pluck('c', 'day');
+
+        return $this->buildNumericSeriesFromDaily($raw, 30);
+    }
+
+    /**
+     * @return array{total: int, new_current: int, new_previous: int, percentage_change: float}
+     */
+    private function calculateBranchSnapshot30dForStore(int|string $storeId): array
+    {
+        $total = (int) Branch::query()->where('store_id', $storeId)->count();
+        [$currentFrom, $currentTo, $previousFrom, $previousTo] = $this->getDateRanges('30d');
+
+        $newCurrent = (int) Branch::query()->where('store_id', $storeId)->whereBetween('created_at', [$currentFrom, $currentTo])->count();
+        $newPrevious = (int) Branch::query()->where('store_id', $storeId)->whereBetween('created_at', [$previousFrom, $previousTo])->count();
+        $pct = $newPrevious > 0
+            ? (($newCurrent - $newPrevious) / $newPrevious) * 100
+            : ($newCurrent > 0 ? 100.0 : 0.0);
+
+        return [
+            'total' => $total,
+            'new_current' => $newCurrent,
+            'new_previous' => $newPrevious,
+            'percentage_change' => round($pct, 1),
+        ];
+    }
+
+    /**
+     * @return array{total: int, new_current: int, new_previous: int, percentage_change: float}
+     */
+    private function calculateProductSnapshot30dForStore(int|string $storeId): array
+    {
+        $total = (int) Product::query()->where('store_id', $storeId)->count();
+        [$currentFrom, $currentTo, $previousFrom, $previousTo] = $this->getDateRanges('30d');
+
+        $newCurrent = (int) Product::query()->where('store_id', $storeId)->whereBetween('created_at', [$currentFrom, $currentTo])->count();
+        $newPrevious = (int) Product::query()->where('store_id', $storeId)->whereBetween('created_at', [$previousFrom, $previousTo])->count();
+        $pct = $newPrevious > 0
+            ? (($newCurrent - $newPrevious) / $newPrevious) * 100
+            : ($newCurrent > 0 ? 100.0 : 0.0);
+
+        return [
+            'total' => $total,
+            'new_current' => $newCurrent,
+            'new_previous' => $newPrevious,
+            'percentage_change' => round($pct, 1),
+        ];
+    }
+
+    /**
+     * @return array{total: int, new_current: int, new_previous: int, percentage_change: float}
+     */
+    private function calculateCategorySnapshot30dForStore(int|string $storeId): array
+    {
+        $total = (int) Category::query()->where('store_id', $storeId)->count();
+        [$currentFrom, $currentTo, $previousFrom, $previousTo] = $this->getDateRanges('30d');
+
+        $newCurrent = (int) Category::query()->where('store_id', $storeId)->whereBetween('created_at', [$currentFrom, $currentTo])->count();
+        $newPrevious = (int) Category::query()->where('store_id', $storeId)->whereBetween('created_at', [$previousFrom, $previousTo])->count();
+        $pct = $newPrevious > 0
+            ? (($newCurrent - $newPrevious) / $newPrevious) * 100
+            : ($newCurrent > 0 ? 100.0 : 0.0);
+
+        return [
+            'total' => $total,
+            'new_current' => $newCurrent,
+            'new_previous' => $newPrevious,
+            'percentage_change' => round($pct, 1),
+        ];
+    }
+
+    /**
+     * @return array<int, float>
+     */
+    private function sparklineNewCustomersForStoreLast30Days(int|string $storeId): array
+    {
+        [$start, $end] = $this->last30DaysBounds();
+
+        $raw = Customer::query()
+            ->whereBetween('created_at', [$start, $end])
+            ->whereHas('orders.branch', fn ($q) => $q->where('store_id', $storeId))
+            ->selectRaw('DATE(created_at) as day, COUNT(*) as c')
+            ->groupBy('day')
+            ->pluck('c', 'day');
+
+        return $this->buildNumericSeriesFromDaily($raw, 30);
+    }
+
+    /**
+     * @param  class-string<Model>  $modelClass
+     * @return array<int, float>
+     */
+    private function sparklineModelCountsLast30DaysForStore(string $modelClass, int|string $storeId): array
+    {
+        [$start, $end] = $this->last30DaysBounds();
+
+        $raw = $modelClass::query()
+            ->where('store_id', $storeId)
             ->whereBetween('created_at', [$start, $end])
             ->selectRaw('DATE(created_at) as day, COUNT(*) as c')
             ->groupBy('day')
