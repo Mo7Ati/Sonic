@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Customer\Http\Controllers\AddressController;
 use Modules\Customer\Http\Controllers\BranchesController;
 use Modules\Customer\Http\Controllers\CartController;
 use Modules\Customer\Http\Controllers\HomeController;
@@ -27,5 +28,15 @@ Route::prefix('customer')->group(function () {
         Route::put('/items/{id}', [CartController::class, 'updateItem']);
         Route::delete('/items/{id}', [CartController::class, 'removeItem']);
         Route::delete('/', [CartController::class, 'clear']);
+    });
+
+    // Addresses (accessible to both guests via X-Session-Id and authenticated users)
+    Route::prefix('addresses')->group(function () {
+        Route::get('/fields', [AddressController::class, 'fields']);
+        Route::get('/', [AddressController::class, 'index']);
+        Route::get('/{id}', [AddressController::class, 'show']);
+        Route::post('/', [AddressController::class, 'store']);
+        Route::put('/{id}', [AddressController::class, 'update']);
+        Route::delete('/{id}', [AddressController::class, 'destroy']);
     });
 });

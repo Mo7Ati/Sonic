@@ -147,6 +147,16 @@ return [
         ],
     ],
 
+    'addresses' => [
+        'fields_section_heading' => 'حقول العنوان',
+        'fields_section_description' => 'حدد الحقول التي يجب على العملاء تعبئتها عند إضافة عنوان التوصيل.',
+        'fields' => 'الحقول',
+        'add_field' => 'إضافة حقل',
+        'field_key' => 'المفتاح',
+        'field_label' => 'التسمية',
+        'is_required' => 'مطلوب',
+    ],
+
     'onboarding' => [
         'steps_section_heading' => 'شاشات الترحيب',
         'steps_section_description' => 'حدد الخطوات التي يراها المستخدم عند فتح التطبيق لأول مرة.',

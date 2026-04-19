@@ -147,6 +147,16 @@ return [
         ],
     ],
 
+    'addresses' => [
+        'fields_section_heading' => 'Address fields',
+        'fields_section_description' => 'Define the fields customers must fill in when adding a delivery address.',
+        'fields' => 'Fields',
+        'add_field' => 'Add field',
+        'field_key' => 'Key',
+        'field_label' => 'Label',
+        'is_required' => 'Required',
+    ],
+
     'onboarding' => [
         'steps_section_heading' => 'Welcome screens',
         'steps_section_description' => 'Define the steps users see when opening the app for the first time.',

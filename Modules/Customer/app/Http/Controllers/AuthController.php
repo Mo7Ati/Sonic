@@ -3,6 +3,7 @@
 namespace Modules\Customer\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Address;
 use App\Models\Cart;
 use App\Models\Customer;
 use Illuminate\Auth\Events\PasswordReset;
@@ -31,6 +32,12 @@ class AuthController extends Controller
 
         event(new Registered($customer));
 
+        $sessionId = $request->header('X-Session-Id');
+        if ($sessionId) {
+            Cart::mergeGuestCart($sessionId, $customer->id);
+            Address::mergeGuestAddresses($sessionId, $customer->id);
+        }
+
         $token = $customer->createToken('customer-token')->plainTextToken;
 
         return successResponse([
@@ -56,6 +63,7 @@ class AuthController extends Controller
         $sessionId = $request->header('X-Session-Id');
         if ($sessionId) {
             Cart::mergeGuestCart($sessionId, $customer->id);
+            Address::mergeGuestAddresses($sessionId, $customer->id);
         }
 
         $token = $customer->createToken('customer-token')->plainTextToken;

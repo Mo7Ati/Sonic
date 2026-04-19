@@ -54,6 +54,7 @@ return [
     'settings' => [
         'platform_settings' => 'إعدادات المنصة',
         'onboarding_settings' => 'إعدادات شاشات الترحيب',
+        'address_settings' => 'إعدادات العناوين',
     ],
 
     'locales' => [
