@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Filament\Store\Widgets;
+
+use App\Services\WidgetDataService;
+use Filament\Widgets\ChartWidget;
+use Illuminate\Contracts\Support\Htmlable;
+
+class StoreTopProductsWidget extends ChartWidget
+{
+    public function getHeading(): string|Htmlable|null
+    {
+        return __('widgets.store.charts.top_products_heading');
+    }
+
+    protected function getType(): string
+    {
+        return 'bar';
+    }
+
+    protected function getData(): array
+    {
+        $storeId = auth('store')->id();
+        $service = app(WidgetDataService::class);
+        $data = $service->getStoreTopProducts($storeId, limit: 10);
+
+        return [
+            'datasets' => [
+                [
+                    'label' => __('widgets.charts.dataset_units_sold'),
+                    'data' => $data->pluck('value')->toArray(),
+                    'backgroundColor' => 'rgb(59, 130, 246)',
+                    'borderColor' => 'rgb(59, 130, 246)',
+                    'borderWidth' => 1,
+                ],
+            ],
+            'labels' => $data->pluck('label')->toArray(),
+        ];
+    }
+}

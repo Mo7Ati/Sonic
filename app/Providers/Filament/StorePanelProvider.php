@@ -2,6 +2,14 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Store\Widgets\StoreBranchPerformanceWidget;
+use App\Filament\Store\Widgets\StoreCustomersWidget;
+use App\Filament\Store\Widgets\StoreOrdersStatusWidget;
+use App\Filament\Store\Widgets\StoreOrdersWidget;
+use App\Filament\Store\Widgets\StoreProductsWidget;
+use App\Filament\Store\Widgets\StoreRevenueChartWidget;
+use App\Filament\Store\Widgets\StoreRevenueWidget;
+use App\Filament\Store\Widgets\StoreTopProductsWidget;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use CraftForge\FilamentLanguageSwitcher\FilamentLanguageSwitcherPlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -42,6 +50,14 @@ class StorePanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Store/Widgets'), for: 'App\Filament\Store\Widgets')
             ->widgets([
+                StoreRevenueWidget::class,
+                StoreOrdersWidget::class,
+                StoreCustomersWidget::class,
+                StoreProductsWidget::class,
+                StoreRevenueChartWidget::class,
+                StoreOrdersStatusWidget::class,
+                StoreTopProductsWidget::class,
+                StoreBranchPerformanceWidget::class,
                 AccountWidget::class,
                 FilamentInfoWidget::class,
             ])
