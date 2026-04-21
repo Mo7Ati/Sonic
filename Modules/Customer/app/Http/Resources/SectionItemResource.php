@@ -55,7 +55,7 @@ class SectionItemResource extends JsonResource
      */
     private function serializeItemData(): ?array
     {
-        if (!$this->type) {
+        if (! $this->type) {
             return null;
         }
 
@@ -77,8 +77,8 @@ class SectionItemResource extends JsonResource
         $dataImage = Arr::get($this->data, 'image');
 
         return [
-            // 'image' => $mediaUrl ?: ($dataImage),
-            'image' => "https://img.freepik.com/free-photo/top-view-table-full-food_23-2149209253.jpg?semt=ais_incoming&w=740&q=80",
+            'image' => $mediaUrl ?: ($dataImage),
+            // 'image' => "https://img.freepik.com/free-photo/top-view-table-full-food_23-2149209253.jpg?semt=ais_incoming&w=740&q=80",
         ];
     }
 

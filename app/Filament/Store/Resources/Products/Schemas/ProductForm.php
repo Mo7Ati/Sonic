@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Option;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -47,6 +48,14 @@ class ProductForm
                                                         TagsInput::make('keywords')
                                                             ->label(__('forms.common.keywords')),
                                                     ]),
+                                                SpatieMediaLibraryFileUpload::make('image')
+                                                    ->disk('public')
+                                                    ->label(__('forms.common.image'))
+                                                    ->image()
+                                                    ->collection('product_images')
+                                                    ->visibility('public')
+                                                    ->preserveFilenames()
+                                                    ->columnSpanFull(),
                                             ])
                                             ->columnSpan(2),
                                         Section::make(__('forms.products.details'))

@@ -59,7 +59,7 @@ class SectionForm
                         // store Categories
                         Select::make('data.store_categories')
                             ->label(__('forms.section.store_categories'))
-                            ->options(StoreCategory::query()->get()->pluck('name', 'id')->toArray())
+                            ->options(StoreCategory::query()->get()->where('parent_id', null)->pluck('name', 'id')->toArray())
                             ->required()
                             ->multiple()->visible(fn ($get): bool => $get('type') === SectionEnum::STORE_CATEGORY->value),
 

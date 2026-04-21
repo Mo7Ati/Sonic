@@ -6,7 +6,6 @@ use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -35,6 +34,7 @@ class StoreCategoryForm
                             ->disk('public')
                             ->label(__('forms.common.image'))
                             ->image()
+                            ->maxSize(1024 * 1024 * 120) // 12MB
                             ->collection('store_categories_images')
                             ->visibility('public')
                             ->preserveFilenames()

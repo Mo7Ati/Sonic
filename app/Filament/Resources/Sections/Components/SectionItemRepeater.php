@@ -2,25 +2,25 @@
 
 namespace App\Filament\Admin\Resources\SectionResource\Components;
 
-use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
 use App\Enums\SectionEnum;
 use App\Enums\SectionItemEnum;
+use App\Models\Store;
+use App\Models\StoreCategory;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 
 class SectionItemRepeater
 {
-
     public static function make($name)
     {
         return Repeater::make($name)
             ->label(__("forms.section.types.$name"))
             ->schema([
-                \Filament\Schemas\Components\Grid::make()->schema([
+                Grid::make()->schema([
                     Group::make()
                         ->schema([
                             Select::make('type')
@@ -38,8 +38,7 @@ class SectionItemRepeater
                                 ->label(__('forms.common.name'))
                                 ->required()
                                 ->translatableTabs()
-                                ->visible(fn($get): bool => $name === SectionEnum::SQUIRE_BANNERS->value),
-
+                                ->visible(fn ($get): bool => $name === SectionEnum::SQUIRE_BANNERS->value),
 
                             SpatieMediaLibraryFileUpload::make('image')
                                 ->disk('public')
@@ -47,43 +46,43 @@ class SectionItemRepeater
                                 ->image()
                                 ->imageEditor()
                                 ->imageEditorMode(2)
+                                ->maxSize(1024 * 1024 * 120) // 12MB
                                 ->collection('section-item')
                                 ->visibility('public')
                                 ->preserveFilenames(),
 
-                            //group type
+                            // group type
                             Select::make('group_id')
                                 ->label(__('forms.section.group'))
                                 ->options(\App\Models\Group::query()->get()->pluck('name', 'id')->toArray())
                                 ->searchable()
                                 ->required()
-                                ->visible(fn($get): bool => $get('type') === SectionItemEnum::GROUP->value),
+                                ->visible(fn ($get): bool => $get('type') === SectionItemEnum::GROUP->value),
 
-                            //store type
+                            // store type
                             Select::make('store_id')
                                 ->label(__('forms.section.store'))
-                                ->options(\App\Models\Store::query()->get()->pluck('name', 'id')->toArray())
+                                ->options(Store::query()->get()->pluck('name', 'id')->toArray())
                                 ->searchable()
                                 ->required()
-                                ->visible(fn($get): bool => $get('type') === SectionItemEnum::STORE->value),
+                                ->visible(fn ($get): bool => $get('type') === SectionItemEnum::STORE->value),
 
-                            //external_link
+                            // external_link
                             TextInput::make('data.external_link')
                                 ->label(__('forms.section.section_item_external_link'))
                                 ->url()
                                 ->required()
-                                ->visible(fn($get): bool => $get('type') === SectionItemEnum::EXTERNAL_LINK->value),
+                                ->visible(fn ($get): bool => $get('type') === SectionItemEnum::EXTERNAL_LINK->value),
 
-                            //category
+                            // category
                             Select::make('store_category_id')
                                 ->label(__('forms.section_item.store_category'))
-                                ->options(\App\Models\StoreCategory::query()->get()->pluck('name', 'id')->toArray())
+                                ->options(StoreCategory::query()->get()->pluck('name', 'id')->toArray())
                                 ->searchable()
                                 ->required()
-                                ->visible(fn($get): bool => $get('type') === SectionItemEnum::STORE_CATEGORY->value),
+                                ->visible(fn ($get): bool => $get('type') === SectionItemEnum::STORE_CATEGORY->value),
                         ]),
-                ])
+                ]),
             ]);
     }
-
 }
