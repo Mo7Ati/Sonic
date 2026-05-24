@@ -4,11 +4,13 @@ use Illuminate\Support\Facades\Route;
 use Modules\Customer\Http\Controllers\AddressController;
 use Modules\Customer\Http\Controllers\BranchesController;
 use Modules\Customer\Http\Controllers\CartController;
+use Modules\Customer\Http\Controllers\CustomerController;
 use Modules\Customer\Http\Controllers\HomeController;
 use Modules\Customer\Http\Controllers\ProductsController;
 use Modules\Customer\Http\Controllers\StoreCategoriesController;
 
 Route::prefix('customer')->group(function () {
+    Route::get('splash', [CustomerController::class, 'index']);
     Route::get('home', [HomeController::class, 'index']);
 
     // Store Categories

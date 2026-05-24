@@ -32,11 +32,7 @@ class AuthController extends Controller
 
         event(new Registered($customer));
 
-        $sessionId = $request->header('X-Session-Id');
-        if ($sessionId) {
-            Cart::mergeGuestCart($sessionId, $customer->id);
-            Address::mergeGuestAddresses($sessionId, $customer->id);
-        }
+        $this->syncGuestData($request, $customer);
 
         $token = $customer->createToken('customer-token')->plainTextToken;
 
@@ -60,11 +56,7 @@ class AuthController extends Controller
 
         $customer->update(['last_seen_at' => now()]);
 
-        $sessionId = $request->header('X-Session-Id');
-        if ($sessionId) {
-            Cart::mergeGuestCart($sessionId, $customer->id);
-            Address::mergeGuestAddresses($sessionId, $customer->id);
-        }
+        $this->syncGuestData($request, $customer);
 
         $token = $customer->createToken('customer-token')->plainTextToken;
 
@@ -151,5 +143,14 @@ class AuthController extends Controller
     public function user(Request $request): JsonResponse
     {
         return successResponse($request->user());
+    }
+
+    private function syncGuestData(Request $request, Customer $customer): void
+    {
+        $sessionId = $request->header('X-Session-Id');
+        if ($sessionId) {
+            Cart::mergeGuestCart($sessionId, $customer->id);
+            Address::mergeGuestAddresses($sessionId, $customer->id);
+        }
     }
 }

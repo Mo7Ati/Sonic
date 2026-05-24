@@ -40,4 +40,9 @@ class Customer extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Order::class);
     }
+
+    public function lastUsedAddress()
+    {
+        return $this->belongsTo(Address::class, 'last_used_address_id');
+    }
 }

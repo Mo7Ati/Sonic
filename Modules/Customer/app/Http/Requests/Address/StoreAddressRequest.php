@@ -22,9 +22,11 @@ class StoreAddressRequest extends FormRequest
 
         foreach ($settings->fields as $index => $field) {
             $rule = ['nullable', 'string', 'max:255'];
-            if (! empty($field['is_required'])) {
+
+            if ($field['is_required']) {
                 $rule[0] = 'required';
             }
+
             $fieldRules["fields.{$field['key']}"] = $rule;
         }
 

@@ -4,7 +4,6 @@ namespace Modules\Customer\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Address;
-use App\Settings\AddressSettings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Customer\Http\Requests\Address\StoreAddressRequest;
@@ -13,22 +12,6 @@ use Modules\Customer\Http\Resources\AddressResource;
 
 class AddressController extends Controller
 {
-    /**
-     * Get the address fields template defined by admin.
-     */
-    public function fields(): JsonResponse
-    {
-        $settings = app(AddressSettings::class);
-
-        $fields = collect($settings->fields)->map(fn ($field) => [
-            'key' => $field['key'],
-            'label' => $field['label'] ?? [],
-            'is_required' => (bool) ($field['is_required'] ?? false),
-        ])->values();
-
-        return successResponse($fields, __('messages.data_retrieved_successfully'));
-    }
-
     /**
      * List all addresses for the current customer or guest session.
      */
@@ -65,8 +48,8 @@ class AddressController extends Controller
             'fields' => $request->addressFields(),
         ];
 
-        if ($request->user()) {
-            $data['customer_id'] = $request->user()->id;
+        if ($request->user('customer')) {
+            $data['customer_id'] = $request->user('customer')->id;
         } else {
             $data['session_id'] = $request->header('X-Session-Id');
         }
