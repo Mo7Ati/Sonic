@@ -24,8 +24,8 @@ class SplashResource extends JsonResource
         return [
             'customer' => CustomerResource::make($customer),
             'addresses' => AddressResource::collection($addresses),
-            'last_used_address' => AddressResource::make($lastUsedAddress),
-            'platform_address_fields' => app(AddressSettings::class)->fields,
+            // 'lastUsedAddress' => AddressResource::make($lastUsedAddress),
+            'platformAddressFields' => app(AddressSettings::class)->fields,
         ];
     }
 
@@ -34,7 +34,7 @@ class SplashResource extends JsonResource
      */
     private function forCustomer(Customer $customer): array
     {
-        $customer->load(['addresses' => fn ($q) => $q->latest(), 'lastUsedAddress']);
+        $customer->load(['addresses' => fn($q) => $q->latest(), 'lastUsedAddress']);
 
         return [
             $customer->addresses,
@@ -47,7 +47,7 @@ class SplashResource extends JsonResource
      */
     private function forGuest(?string $sessionId): array
     {
-        if (! $sessionId) {
+        if (!$sessionId) {
             return [collect(), null];
         }
 

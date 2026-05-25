@@ -10,6 +10,7 @@ class HomeController extends Controller
 {
     public function index()
     {
+        sleep(1);
         $homePageSections = Section::active()->ordered()->get();
 
         return successResponse(
