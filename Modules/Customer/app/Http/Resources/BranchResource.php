@@ -21,7 +21,8 @@ class BranchResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->full_name,
+            "store_id" => $this->store_id,
+            'name' => $this->whenLoaded('store', fn($store) => $store->name . ' - ' . $this->name, $this->name),
             'description' => $this->whenLoaded('store', fn($store) => $store->description),
             'logo' => $this->whenLoaded('store', fn($store) => $store->getFirstMediaUrl('store_images')),
             'cover_image' => $this->whenLoaded('store', fn($store) => $store->getFirstMediaUrl('store_cover_images')),
@@ -29,10 +30,7 @@ class BranchResource extends JsonResource
             'location' => $this->location,
             'delivery_time' => $this->delivery_time,
             'delivery_fee' => $this->delivery_fee,
-            'status' => [
-                'label' => $this->status->label(),
-                'value' => $this->status->value,
-            ],
+            'status' => $this->status->fullModel(),
             'categories' => $this->when(
                 $this->relationLoaded('store') && $this->store->relationLoaded('categories'),
                 fn() => CategoryResource::collection($this->store->categories),
