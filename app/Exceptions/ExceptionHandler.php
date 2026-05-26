@@ -52,6 +52,11 @@ class ExceptionHandler
      */
     private function apiResponse($e, $message, $code, $codeResponse = 200): JsonResponse
     {
+        Log::info('api response', [
+            'request' => request()->all(),
+            'headers' => request()->headers->all(),
+        ]);
+
         $response = [
             'status' => false,
             'data' => null,

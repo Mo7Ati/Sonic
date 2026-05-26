@@ -5,6 +5,7 @@ namespace Modules\Customer\Http\Resources;
 use App\Models\Address;
 use App\Models\Customer;
 use App\Settings\AddressSettings;
+use App\Settings\OnboardingSettings;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -26,6 +27,7 @@ class SplashResource extends JsonResource
             'addresses' => AddressResource::collection($addresses),
             // 'lastUsedAddress' => AddressResource::make($lastUsedAddress),
             'platformAddressFields' => app(AddressSettings::class)->fields,
+            'onboardingSlides' => OnboardingResource::collection(app(OnboardingSettings::class)->steps),
         ];
     }
 

@@ -6,6 +6,7 @@ use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
 use App\Filament\Clusters\Settings\SettingsCluster;
 use App\Settings\OnboardingSettings;
 use BackedEnum;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -57,18 +58,22 @@ class OnboardingSettingsPage extends SettingsPage
                                             ]),
                                         Grid::make(1)
                                             ->schema([
-                                                Select::make('color')
+                                                // Select::make('color')
+                                                //     ->label(__('forms.onboarding.color'))
+                                                //     ->options([
+                                                //         'black' => __('forms.onboarding.colors.black'),
+                                                //         'white' => __('forms.onboarding.colors.white'),
+                                                //         'amber' => __('forms.onboarding.colors.amber'),
+                                                //         'blue' => __('forms.onboarding.colors.blue'),
+                                                //         'green' => __('forms.onboarding.colors.green'),
+                                                //         'red' => __('forms.onboarding.colors.red'),
+                                                //     ])
+                                                //     ->required()
+                                                //     ->native(false),
+
+                                                ColorPicker::make('color')
                                                     ->label(__('forms.onboarding.color'))
-                                                    ->options([
-                                                        'black' => __('forms.onboarding.colors.black'),
-                                                        'white' => __('forms.onboarding.colors.white'),
-                                                        'amber' => __('forms.onboarding.colors.amber'),
-                                                        'blue' => __('forms.onboarding.colors.blue'),
-                                                        'green' => __('forms.onboarding.colors.green'),
-                                                        'red' => __('forms.onboarding.colors.red'),
-                                                    ])
-                                                    ->required()
-                                                    ->native(false),
+                                                    ->required(),
                                                 FileUpload::make('image')
                                                     ->label(__('forms.common.image'))
                                                     ->image()
