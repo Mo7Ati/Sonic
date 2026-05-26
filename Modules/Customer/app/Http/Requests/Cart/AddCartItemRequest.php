@@ -40,7 +40,7 @@ class AddCartItemRequest extends FormRequest
     {
         return [
             function (Validator $validator): void {
-                if (! $this->user() && ! $this->header('X-Session-Id')) {
+                if (! $this->user('sanctum') && ! $this->header('X-Session-Id')) {
                     $validator->errors()->add('session', 'Authentication or X-Session-Id header is required.');
                 }
             },

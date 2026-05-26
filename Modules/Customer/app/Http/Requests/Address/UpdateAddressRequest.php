@@ -38,7 +38,7 @@ class UpdateAddressRequest extends FormRequest
     {
         return [
             function ($validator) {
-                if (! $this->user() && ! $this->header('X-Session-Id')) {
+                if (! $this->user('sanctum') && ! $this->header('X-Session-Id')) {
                     $validator->errors()->add('session', 'Authentication or X-Session-Id header is required.');
                 }
             },
