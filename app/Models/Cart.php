@@ -48,8 +48,9 @@ class Cart extends Model
      */
     public static function resolveFor(Request $request): ?self
     {
-        if ($request->user()) {
-            return static::where('customer_id', $request->user()->id)
+        $user = $request->user('sanctum');
+        if ($user) {
+            return static::where('customer_id', $user->id)
                 ->first();
         }
 
@@ -67,9 +68,10 @@ class Cart extends Model
      */
     public static function resolveOrCreateFor(Request $request, int $branchId): self
     {
-        if ($request->user()) {
+        $user = $request->user('sanctum');
+        if ($user) {
             return static::firstOrCreate(
-                ['customer_id' => $request->user()->id],
+                ['customer_id' => $user->id],
                 ['branch_id' => $branchId],
             );
         }
@@ -90,13 +92,13 @@ class Cart extends Model
     {
         $guestCart = static::where('session_id', $sessionId)->first();
 
-        if (! $guestCart) {
+        if (!$guestCart) {
             return;
         }
 
         $customerCart = static::where('customer_id', $customerId)->first();
 
-        if (! $customerCart) {
+        if (!$customerCart) {
             $guestCart->update([
                 'customer_id' => $customerId,
                 'session_id' => null,

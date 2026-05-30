@@ -11,6 +11,7 @@ class StoreCategoriesController extends Controller
 {
     public function show(Request $request, $category_id)
     {
+        // sleep(5);
         $category = StoreCategory::with('children')->findOrFail($category_id);
 
         return successResponse(
