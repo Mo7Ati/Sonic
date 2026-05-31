@@ -6,6 +6,7 @@ use Modules\Customer\Http\Controllers\BranchesController;
 use Modules\Customer\Http\Controllers\CartController;
 use Modules\Customer\Http\Controllers\CustomerController;
 use Modules\Customer\Http\Controllers\HomeController;
+use Modules\Customer\Http\Controllers\OrderController;
 use Modules\Customer\Http\Controllers\ProductsController;
 use Modules\Customer\Http\Controllers\StoreCategoriesController;
 
@@ -19,6 +20,7 @@ Route::prefix('customer')->group(function () {
     // Branches
     Route::get('branches', [BranchesController::class, 'index']);
     Route::get('branches/{id}', [BranchesController::class, 'show']);
+    Route::get('branches/{id}/payment-methods', [BranchesController::class, 'getPaymentMethods']);
 
     // Products
     Route::get('products/{id}', [ProductsController::class, 'show']);
@@ -40,5 +42,10 @@ Route::prefix('customer')->group(function () {
         Route::post('/', [AddressController::class, 'store']);
         Route::put('/{id}', [AddressController::class, 'update']);
         Route::delete('/{id}', [AddressController::class, 'destroy']);
+    });
+
+    // Orders (require an authenticated customer)
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('orders', [OrderController::class, 'store']);
     });
 });

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use Illuminate\Http\Request;
 use Modules\Customer\Http\Resources\BranchResource;
+use Modules\Customer\Http\Resources\PaymentMethodResource;
 
 class BranchesController extends Controller
 {
@@ -37,6 +38,16 @@ class BranchesController extends Controller
 
         return successResponse(
             BranchResource::make($branch),
+            __('messages.data_retrieved_successfully'),
+        );
+    }
+
+    public function getPaymentMethods($branchId)
+    {
+        $methods = Branch::findOrFail($branchId)->activePaymentMethods;
+
+        return successResponse(
+            PaymentMethodResource::collection($methods),
             __('messages.data_retrieved_successfully'),
         );
     }

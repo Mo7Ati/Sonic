@@ -28,6 +28,12 @@ return [
         'refunded' => 'Refunded',
     ],
 
+    'payment_method_type' => [
+        'bop' => 'Bank of Palestine',
+        'palpay' => 'PalPay',
+        'jawwal_pay' => 'Jawwal Pay',
+    ],
+
     'order_status' => [
         'pending' => 'Pending',
         'preparing' => 'Preparing',

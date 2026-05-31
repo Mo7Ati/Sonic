@@ -28,6 +28,12 @@ return [
         'refunded' => 'مسترجع',
     ],
 
+    'payment_method_type' => [
+        'bop' => 'بنك فلسطين',
+        'palpay' => 'بال باي',
+        'jawwal_pay' => 'جوال باي',
+    ],
+
     'order_status' => [
         'pending' => 'قيد الانتظار',
         'preparing' => 'قيد التحضير',

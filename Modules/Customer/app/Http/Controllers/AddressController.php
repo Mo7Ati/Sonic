@@ -48,8 +48,8 @@ class AddressController extends Controller
             'fields' => $request->addressFields(),
         ];
 
-        if ($request->user('customer')) {
-            $data['customer_id'] = $request->user('customer')->id;
+        if ($request->user('sanctum')) {
+            $data['customer_id'] = $request->user('sanctum')->id;
         } else {
             $data['session_id'] = $request->header('X-Session-Id');
         }

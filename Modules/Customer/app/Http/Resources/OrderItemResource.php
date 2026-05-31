@@ -2,25 +2,26 @@
 
 namespace Modules\Customer\Http\Resources;
 
-use App\Models\CartItem;
+use App\Models\orderItems;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin CartItem
+ * @mixin orderItems
  */
-class CartItemResource extends JsonResource
+class OrderItemResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $product = $this->product_data ?? [];
+
         return [
             'id' => $this->id,
             'product_id' => $this->product_id,
-            'name' => $this->whenLoaded('product', fn ($product) => $product->name),
-            'image' => $this->whenLoaded('product', fn ($product) => $product->getFirstMediaUrl('product_images') ?: 'https://img.freepik.com/free-photo/top-view-table-full-food_23-2149209253.jpg?semt=ais_incoming&w=740&q=80'),
+            'name' => $product['name'] ?? $this->product?->name,
+            'image' => $product['image'] ?? null,
             'quantity' => $this->quantity,
             'unit_price' => $this->unit_price,
-            'compare_price' => $this->whenLoaded('product', fn ($product) => $product->compare_price),
             'options_data' => $this->options_data,
             'options_amount' => $this->options_amount,
             'additions_data' => $this->additions_data,

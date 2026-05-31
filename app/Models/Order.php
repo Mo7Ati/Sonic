@@ -3,15 +3,20 @@
 namespace App\Models;
 
 use App\Enums\OrderStatusEnum;
+use App\Enums\PaymentMethodTypeEnum;
 use App\Enums\PaymentStatusEnum;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 #[Fillable([
     'status',
     'payment_status',
+    'payment_method_type',
+    'payment_method_data',
     'cancelled_reason',
     'customer_id',
     'customer_data',
@@ -23,12 +28,16 @@ use Illuminate\Http\Request;
     'delivery_amount',
     'notes',
 ])]
-class Order extends Model
+class Order extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
+
+    public const PAYMENT_PROOF_COLLECTION = 'payment_proof';
+
     protected $casts = [
         'customer_data' => 'array',
         'address_data' => 'array',
+        'payment_method_data' => 'array',
         'total' => 'decimal:2',
         'total_items_amount' => 'decimal:2',
         'delivery_amount' => 'decimal:2',
@@ -36,7 +45,18 @@ class Order extends Model
         'updated_at' => 'datetime',
         'status' => OrderStatusEnum::class,
         'payment_status' => PaymentStatusEnum::class,
+        'payment_method_type' => PaymentMethodTypeEnum::class,
     ];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection(self::PAYMENT_PROOF_COLLECTION)->singleFile();
+    }
+
+    public function getPaymentProofUrlAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl(self::PAYMENT_PROOF_COLLECTION) ?: null;
+    }
 
     /*
      * Relationships
@@ -50,6 +70,7 @@ class Order extends Model
     {
         return $this->belongsTo(Branch::class);
     }
+
     public function products()
     {
         return $this->belongsToMany(Product::class, 'order_items', 'order_id', 'product_id')
@@ -98,9 +119,9 @@ class Order extends Model
     public function scopeApplyFilters($query, Request $request)
     {
         return $query
-            ->when($request->input('search'), fn($q, $search) => $q->search($search))
-            ->when($request->input('status'), fn($q, $status) => $q->status($status))
-            ->when($request->input('payment_status'), fn($q, $payment_status) => $q->paymentStatus($payment_status))
+            ->when($request->input('search'), fn ($q, $search) => $q->search($search))
+            ->when($request->input('status'), fn ($q, $status) => $q->status($status))
+            ->when($request->input('payment_status'), fn ($q, $payment_status) => $q->paymentStatus($payment_status))
             ->orderBy($request->input('sort', 'id'), $request->input('direction', 'desc'));
     }
 }

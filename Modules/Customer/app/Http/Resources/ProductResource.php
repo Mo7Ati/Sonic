@@ -28,14 +28,14 @@ class ProductResource extends JsonResource
             'price' => $pivot?->price ?? $this->price,
             'compare_price' => $pivot?->compare_price ?? $this->compare_price,
             'quantity' => $pivot?->quantity ?? null,
-            'image' =>  $this->getFirstMediaUrl('product_images') ?: "https://img.freepik.com/free-photo/top-view-table-full-food_23-2149209253.jpg?semt=ais_incoming&w=740&q=80",
+            'image' => $this->getFirstMediaUrl('product_images') ?: 'https://img.freepik.com/free-photo/top-view-table-full-food_23-2149209253.jpg?semt=ais_incoming&w=740&q=80',
             'category' => CategoryResource::make($this->whenLoaded('category')),
             'options' => $this->when(
                 $this->relationLoaded('options'),
-                fn() => $this->options
-                    ->filter(fn($option) => $option->pivot->is_available)
-                    ->groupBy(fn($option) => $option->optionGroup?->id)
-                    ->map(fn($options, $groupId) => [
+                fn () => $this->options
+                    ->filter(fn ($option) => $option->pivot->is_available)
+                    ->groupBy('option_group_id')
+                    ->map(fn ($options, $groupId) => [
                         'group_id' => $groupId,
                         'group' => $options->first()->optionGroup?->name,
                         'items' => OptionResource::collection($options->values()),

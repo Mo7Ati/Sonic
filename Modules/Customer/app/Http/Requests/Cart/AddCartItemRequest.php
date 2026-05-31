@@ -17,21 +17,20 @@ class AddCartItemRequest extends FormRequest
      */
     public function rules(): array
     {
+        // Prices (unit_price, options.*.price, additions.*.price) are intentionally
+        // NOT accepted from the client. They are resolved server-side from the
+        // product / pivot tables in CartController to prevent price tampering.
         return [
             'branch_id' => ['required', 'integer', 'exists:branches,id'],
             'product_id' => ['required', 'integer', 'exists:products,id'],
             'quantity' => ['required', 'integer', 'min:1'],
-            'unit_price' => ['required', 'numeric', 'min:0'],
+
             'options' => ['nullable', 'array'],
-            'options.*.group_id' => ['required_with:options', 'integer'],
-            'options.*.group_name' => ['required_with:options', 'string'],
-            'options.*.item_id' => ['required_with:options', 'integer'],
-            'options.*.item_name' => ['required_with:options', 'string'],
-            'options.*.price' => ['required_with:options', 'numeric', 'min:0'],
+            'options.*' => ['required_with:options', 'integer', 'exists:options,id'],
+
             'additions' => ['nullable', 'array'],
-            'additions.*.id' => ['required_with:additions', 'integer'],
-            'additions.*.name' => ['required_with:additions', 'string'],
-            'additions.*.price' => ['required_with:additions', 'numeric', 'min:0'],
+            'additions.*' => ['required_with:additions', 'integer'],
+
             'force_replace' => ['nullable', 'boolean'],
         ];
     }

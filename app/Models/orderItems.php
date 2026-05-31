@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -11,8 +10,11 @@ class orderItems extends Pivot
     use SoftDeletes;
 
     protected $table = 'order_items';
+
     public $incrementing = true;
-    public $timestamps = true;
+
+    public $timestamps = false;
+
     protected $fillable = [
         'order_id',
         'product_id',
