@@ -4,6 +4,7 @@ namespace Modules\Cashier\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Arr;
 
 class OrderItemResource extends JsonResource
 {
@@ -12,14 +13,16 @@ class OrderItemResource extends JsonResource
         return [
             'id' => $this->id,
             'product_id' => $this->product_id,
-            'product_data' => $this->product_data,
-            'product_name' => $this->product?->name,
+            'product_data' => [
+                'id' => $this->product_id,
+                'name' => Arr::get($this->product_data['name'], app()->getLocale()),
+            ],
             'quantity' => $this->quantity,
             'unit_price' => $this->unit_price,
             'options_amount' => $this->options_amount,
-            'options_data' => $this->options_data,
+            'options_data' => OptionResource::collection($this->options_data ?? []),
             'additions_amount' => $this->additions_amount,
-            'additions_data' => $this->additions_data,
+            'additions_data' => AdditionResource::collection($this->additions_data ?? []),
             'total_price' => $this->total_price,
         ];
     }

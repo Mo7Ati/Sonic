@@ -17,8 +17,7 @@ class UpdateOrderStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['required', 'string', Rule::in(['preparing', 'on_the_way', 'completed', 'rejected'])],
-            'cancelled_reason' => ['required_if:status,rejected', 'nullable', 'string', 'max:500'],
+            'status' => ['required', 'string', Rule::in(['on_the_way', 'completed'])],
         ];
     }
 
@@ -31,7 +30,6 @@ class UpdateOrderStatusRequest extends FormRequest
                 $newStatus = $this->input('status');
 
                 $allowedTransitions = [
-                    'pending' => ['preparing', 'rejected'],
                     'preparing' => ['on_the_way'],
                     'on_the_way' => ['completed'],
                 ];

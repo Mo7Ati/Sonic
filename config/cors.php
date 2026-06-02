@@ -7,7 +7,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        env('CASHIER_FRONTEND_URL', 'http://localhost:5173'),
+        env('CASHIER_FRONTEND_URL', 'http://localhost:5174'),
     ],
 
     'allowed_origins_patterns' => [],

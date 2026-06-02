@@ -2,77 +2,59 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Support\Facades\Log;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Auth\Access\AuthorizationException;
 
 class ExceptionHandler
 {
     /**
-     * Handle API exceptions.
-     *
-     * @param Throwable $e
-     * @return JsonResponse
+     * Handle API exceptions, rendering them through the canonical response envelope.
      */
     public function handleApiException(Throwable $e): JsonResponse
     {
-        // Handle Laravel Authentication Exceptions
-        if ($e instanceof AuthenticationException || $e->getMessage() == 'Route [login] not defined.')
-            return $this->apiResponse($e, 'unauthenticated', 401, 401);
-
-
-        if ($e instanceof AuthorizationException)
-            return $this->apiResponse($e, 'unauthorized', 403, 403);
-
-
-        // Handle other exceptions
-        if ($e instanceof NotFoundHttpException)
-            return $this->apiResponse($e, 'not_found', 404, 404);
-
-
-        if ($e instanceof ValidationException)
-            return $this->apiResponse($e, $e->getMessage(), 422, 422);
-
-        // Handle generic exceptions
-        return $this->apiResponse($e, $e->getMessage(), 500, 500);
-    }
-
-    /**
-     * Create a standardized API error response.
-     *
-     * @param Throwable $e
-     * @param string $message
-     * @param int $code
-     * @param int $codeResponse
-     * @return JsonResponse
-     */
-    private function apiResponse($e, $message, $code, $codeResponse = 200): JsonResponse
-    {
-        Log::info('api response', [
-            'request' => request()->all(),
-            'headers' => request()->headers->all(),
-        ]);
-
-        $response = [
-            'status' => false,
-            'data' => null,
-            'message' => $message,
-            'error_code' => $code,
+        $debug = [
+            'exception' => get_class($e),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
         ];
 
-        // Add debug information in development environment
-        if (app()->environment('local', 'development')) {
-            $response['debug'] = [
-                'exception' => get_class($e),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ];
+        if ($e instanceof ValidationException) {
+            return apiEnvelope(
+                success: false,
+                message: $e->getMessage(),
+                status: 422,
+                errors: $e->errors(),
+                debug: $debug,
+            );
         }
 
-        return response()->json($response, $codeResponse);
+        if ($e instanceof AuthenticationException || $e->getMessage() === 'Route [login] not defined.') {
+            return apiEnvelope(false, __('auth.unauthenticated'), 401, debug: $debug);
+        }
+
+        if ($e instanceof AuthorizationException) {
+            return apiEnvelope(false, __('auth.unauthorized'), 403, debug: $debug);
+        }
+
+        if ($e instanceof NotFoundHttpException) {
+            return apiEnvelope(false, __('errors.not_found'), 404, debug: $debug);
+        }
+
+        // Preserve the status code of any HTTP exception (e.g. abort(409, ...)).
+        if ($e instanceof HttpExceptionInterface) {
+            return apiEnvelope(false, $e->getMessage(), $e->getStatusCode(), debug: $debug);
+        }
+
+        // Never leak internal exception details to clients in production.
+        $message = app()->environment('local', 'development')
+            ? $e->getMessage()
+            : __('errors.server');
+
+        return apiEnvelope(false, $message, 500, debug: $debug);
     }
 }

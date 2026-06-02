@@ -119,9 +119,13 @@ class Order extends Model implements HasMedia
     public function scopeApplyFilters($query, Request $request)
     {
         return $query
-            ->when($request->input('search'), fn ($q, $search) => $q->search($search))
-            ->when($request->input('status'), fn ($q, $status) => $q->status($status))
-            ->when($request->input('payment_status'), fn ($q, $payment_status) => $q->paymentStatus($payment_status))
+            ->when($request->input('search'), fn($q, $search) => $q->search($search))
+            ->when($request->input('status'), fn($q, $status) => $q->status($status))
+            ->when($request->input('payment_status'), fn($q, $payment_status) => $q->paymentStatus($payment_status))
             ->orderBy($request->input('sort', 'id'), $request->input('direction', 'desc'));
+    }
+    public function getIsNewAttribute(): bool
+    {
+        return $this->status === OrderStatusEnum::PENDING && $this->payment_status === PaymentStatusEnum::WAIT_FOR_CONFIRMATION;
     }
 }

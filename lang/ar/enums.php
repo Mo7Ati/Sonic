@@ -22,10 +22,9 @@ return [
     ],
 
     'payment_status' => [
-        'unpaid' => 'غير مدفوع',
-        'paid' => 'مدفوع',
-        'failed' => 'فشل',
-        'refunded' => 'مسترجع',
+        'wait_for_confirmation' => 'بانتظار التأكيد',
+        'confirmed' => 'مؤكد',
+        'rejected' => 'مرفوض',
     ],
 
     'payment_method_type' => [

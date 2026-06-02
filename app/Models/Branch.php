@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -75,9 +76,9 @@ class Branch extends Model implements HasMedia
         return $this->products()->wherePivot('is_available', true);
     }
 
-    public function cashiers()
+    public function cashier(): HasOne
     {
-        return $this->hasMany(Cashier::class);
+        return $this->hasOne(Cashier::class);
     }
 
     public function paymentMethods()

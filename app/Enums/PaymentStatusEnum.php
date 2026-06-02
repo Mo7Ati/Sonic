@@ -4,18 +4,16 @@ namespace App\Enums;
 
 enum PaymentStatusEnum: string
 {
-    case UNPAID = 'unpaid';
-    case PAID = 'paid';
-    case FAILED = 'failed';
-    case REFUNDED = 'refunded';
+    case WAIT_FOR_CONFIRMATION = 'wait_for_confirmation';
+    case CONFIRMED = 'confirmed';
+    case REJECTED = 'rejected';
 
     public function label(): string
     {
         return match ($this) {
-            self::UNPAID => __('enums.payment_status.unpaid'),
-            self::PAID => __('enums.payment_status.paid'),
-            self::FAILED => __('enums.payment_status.failed'),
-            self::REFUNDED => __('enums.payment_status.refunded'),
+            self::WAIT_FOR_CONFIRMATION => __('enums.payment_status.wait_for_confirmation'),
+            self::CONFIRMED => __('enums.payment_status.confirmed'),
+            self::REJECTED => __('enums.payment_status.rejected'),
         };
     }
 
@@ -27,10 +25,9 @@ enum PaymentStatusEnum: string
     public function color(): string
     {
         return match ($this) {
-            self::UNPAID => 'warning',
-            self::PAID => 'success',
-            self::FAILED => 'destructive',
-            self::REFUNDED => 'muted',
+            self::WAIT_FOR_CONFIRMATION => 'warning',
+            self::CONFIRMED => 'success',
+            self::REJECTED => 'destructive',
         };
     }
 

@@ -22,7 +22,29 @@ enum OrderStatusEnum: string
             self::REJECTED => __('enums.order_status.rejected'),
         };
     }
+    public function textColor(): string
+    {
+        return match ($this) {
+            self::PENDING => '#D97706',     // amber-600
+            self::PREPARING => '#0284C7',   // sky-600
+            self::ON_THE_WAY => '#F59E0B',  // primary
+            self::COMPLETED => '#16A34A',   // green-600
+            self::CANCELLED => '#DC2626',   // red-600
+            self::REJECTED => '#DC2626',
+        };
+    }
 
+    public function backgroundColor(): string
+    {
+        return match ($this) {
+            self::PENDING => '#FFFBEB',     // amber-50
+            self::PREPARING => '#F0F9FF',   // sky-50
+            self::ON_THE_WAY => '#FFFBEB',  // primary tint
+            self::COMPLETED => '#F0FDF4',   // green-50
+            self::CANCELLED => '#FEF2F2',   // red-50
+            self::REJECTED => '#FEF2F2',
+        };
+    }
     /**
      * Get all enum values as an array
      *
@@ -45,12 +67,14 @@ enum OrderStatusEnum: string
         );
     }
 
-    
+
     public function model()
     {
         return [
             'value' => $this->value,
             'label' => $this->label(),
+            'textColor' => $this->textColor(),
+            'backgroundColor' => $this->backgroundColor(),
         ];
     }
 }

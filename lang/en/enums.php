@@ -22,10 +22,9 @@ return [
     ],
 
     'payment_status' => [
-        'unpaid' => 'Un paid',
-        'paid' => 'Paid',
-        'failed' => 'Failed',
-        'refunded' => 'Refunded',
+        'wait_for_confirmation' => 'Waiting for Confirmation',
+        'confirmed' => 'Confirmed',
+        'rejected' => 'Rejected',
     ],
 
     'payment_method_type' => [

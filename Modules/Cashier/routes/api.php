@@ -10,8 +10,8 @@ Route::prefix('cashier')->middleware(['auth:cashier'])->group(function () {
     // Orders
     Route::get('orders', [OrderController::class, 'index']);
     Route::get('orders/{order}', [OrderController::class, 'show']);
+    Route::post('orders/{order}/respond', [OrderController::class, 'respond']);
     Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus']);
-    Route::post('orders/{order}/confirm-payment', [OrderController::class, 'confirmPayment']);
 
     // Payment Methods
     Route::get('payment-methods', [PaymentMethodController::class, 'index']);

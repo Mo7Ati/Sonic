@@ -7,7 +7,6 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Modules\Customer\Http\Requests\Cart\AddCartItemRequest;
 use Modules\Customer\Http\Requests\Cart\UpdateCartItemRequest;
 
@@ -20,9 +19,7 @@ class CartService
 
         if ($cart && $cart->branch_id != $validated['branch_id']) {
             if (empty($validated['force_replace'])) {
-                return throw ValidationException::withMessages([
-                    'branch_id' => __('messages.cart_branch_conflict'),
-                ]);
+                abort(409, __('messages.cart_already_exists'));
             }
 
             $cart->items()->delete();
@@ -88,12 +85,11 @@ class CartService
             ->wherePivot('is_available', true)
             ->get();
 
-
         return [
             $options->map(fn($option) => [
                 'id' => $option->id,
                 'group_id' => $option->option_group_id,
-                'name' => $option->name,
+                'name' => $option->getTranslations('name'),
                 'price' => $option->pivot->price,
             ]),
             $options->sum('pivot.price'),
@@ -117,7 +113,7 @@ class CartService
         return [
             $additions->map(fn($addition) => [
                 'id' => $addition->id,
-                'name' => $addition->name,
+                'name' => $addition->getTranslations('name'),
                 'price' => $addition->pivot->price,
             ]),
             $additions->sum('pivot.price'),

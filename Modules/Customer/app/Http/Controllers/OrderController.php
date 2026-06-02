@@ -30,7 +30,7 @@ class OrderController extends Controller
 
         $cart = Cart::where('customer_id', $customer->id)->first();
 
-        if (! $cart || $cart->items()->count() === 0) {
+        if (!$cart || $cart->items()->count() === 0) {
             return errorResponse(__('messages.cart_is_empty'), 422);
         }
 
@@ -39,7 +39,7 @@ class OrderController extends Controller
         $address = Address::where('customer_id', $customer->id)
             ->find($validated['address_id']);
 
-        if (! $address) {
+        if (!$address) {
             return errorResponse(__('messages.address_not_found'), 404);
         }
 
@@ -48,7 +48,7 @@ class OrderController extends Controller
             ->active()
             ->first();
 
-        if (! $method) {
+        if (!$method) {
             return errorResponse(__('messages.payment_method_unavailable'), 422);
         }
 
@@ -58,21 +58,14 @@ class OrderController extends Controller
         $order = DB::transaction(function () use ($cart, $customer, $address, $method, $subtotal, $deliveryFee, $validated) {
             $order = Order::create([
                 'status' => OrderStatusEnum::PENDING->value,
-                'payment_status' => PaymentStatusEnum::UNPAID->value,
+                'payment_status' => PaymentStatusEnum::WAIT_FOR_CONFIRMATION->value,
                 'payment_method_type' => $method->type->value,
                 'payment_method_data' => $method->snapshot(),
                 'customer_id' => $customer->id,
-                'customer_data' => [
-                    'name' => $customer->name,
-                    'phone_number' => $customer->phone_number,
-                    'email' => $customer->email,
-                ],
+                'customer_data' => $customer->toArray(),
                 'branch_id' => $cart->branch_id,
                 'address_id' => $address->id,
-                'address_data' => [
-                    'name' => $address->name,
-                    'fields' => $address->fields,
-                ],
+                'address_data' => $address->toArray(),
                 'total_items_amount' => $subtotal,
                 'delivery_amount' => $deliveryFee,
                 'total' => $subtotal + $deliveryFee,
@@ -84,7 +77,7 @@ class OrderController extends Controller
                     'product_id' => $item->product_id,
                     'product_data' => [
                         'id' => $item->product_id,
-                        'name' => $item->product?->name,
+                        'name' => $item->product->getTranslations('name'),
                     ],
                     'quantity' => $item->quantity,
                     'unit_price' => $item->unit_price,
@@ -96,14 +89,15 @@ class OrderController extends Controller
                 ]);
             }
 
-            $order->addMediaFromRequest('proof')
-                ->toMediaCollection(Order::PAYMENT_PROOF_COLLECTION);
+            $order->addMediaFromRequest('proof')->toMediaCollection(Order::PAYMENT_PROOF_COLLECTION);
 
             $cart->items()->delete();
             $cart->delete();
 
             return $order;
         });
+
+
 
         return successResponse(
             OrderResource::make($order->load('items')),

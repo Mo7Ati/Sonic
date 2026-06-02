@@ -42,7 +42,7 @@ enum PaymentMethodTypeEnum: string
     public static function toArray(): array
     {
         return array_map(
-            fn (self $case) => [
+            fn(self $case) => [
                 'value' => $case->value,
                 'label' => $case->label(),
             ],

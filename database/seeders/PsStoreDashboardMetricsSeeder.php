@@ -396,17 +396,17 @@ class PsStoreDashboardMetricsSeeder extends Seeder
     {
         return match ($status) {
             OrderStatusEnum::COMPLETED, OrderStatusEnum::ON_THE_WAY, OrderStatusEnum::PREPARING => random_int(1, 100) <= 92
-                ? PaymentStatusEnum::PAID
-                : PaymentStatusEnum::UNPAID,
+                ? PaymentStatusEnum::CONFIRMED
+                : PaymentStatusEnum::WAIT_FOR_CONFIRMATION,
             OrderStatusEnum::PENDING => random_int(1, 100) <= 70
-                ? PaymentStatusEnum::UNPAID
-                : PaymentStatusEnum::PAID,
+                ? PaymentStatusEnum::WAIT_FOR_CONFIRMATION
+                : PaymentStatusEnum::CONFIRMED,
             OrderStatusEnum::CANCELLED => random_int(1, 100) <= 30
-                ? PaymentStatusEnum::REFUNDED
-                : PaymentStatusEnum::UNPAID,
+                ? PaymentStatusEnum::REJECTED
+                : PaymentStatusEnum::WAIT_FOR_CONFIRMATION,
             OrderStatusEnum::REJECTED => random_int(1, 100) <= 50
-                ? PaymentStatusEnum::REFUNDED
-                : PaymentStatusEnum::UNPAID,
+                ? PaymentStatusEnum::REJECTED
+                : PaymentStatusEnum::WAIT_FOR_CONFIRMATION,
         };
     }
 }

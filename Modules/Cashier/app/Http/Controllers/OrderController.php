@@ -9,7 +9,9 @@ use App\Models\Order;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Modules\Cashier\Http\Requests\Orders\RespondOrderRequest;
 use Modules\Cashier\Http\Requests\Orders\UpdateOrderStatusRequest;
+use Modules\Cashier\Http\Resources\OrderListResource;
 use Modules\Cashier\Http\Resources\OrderResource;
 
 class OrderController extends Controller
@@ -19,11 +21,10 @@ class OrderController extends Controller
         $branchId = Auth::guard('cashier')->user()->branch_id;
 
         $orders = Order::where('branch_id', $branchId)
-            ->with(['customer', 'items.product'])
             ->applyFilters($request)
             ->paginate($request->input('per_page', 15));
 
-        return successResponse(OrderResource::collection($orders)->response()->getData(true));
+        return successResponse(OrderResource::collection($orders)->response()->getData(true), 'Orders fetched successfully.');
     }
 
     public function show(Order $order): JsonResponse
@@ -36,36 +37,18 @@ class OrderController extends Controller
 
         $order->load(['customer', 'items.product', 'address']);
 
-        return successResponse(new OrderResource($order));
-    }
-
-    public function updateStatus(UpdateOrderStatusRequest $request, Order $order): JsonResponse
-    {
-        $branchId = Auth::guard('cashier')->user()->branch_id;
-
-        if ($order->branch_id !== $branchId) {
-            return errorResponse('Order not found.', 404);
-        }
-
-        $data = ['status' => $request->status];
-
-        if ($request->status === OrderStatusEnum::REJECTED->value) {
-            $data['cancelled_reason'] = $request->cancelled_reason;
-        }
-
-        $order->update($data);
-
-        return successResponse(
-            new OrderResource($order->fresh(['customer', 'items.product'])),
-            'Order status updated.'
-        );
+        return successResponse(OrderResource::make($order)->serializeForShow(), 'Order fetched successfully.');
     }
 
     /**
-     * Confirm the customer's (manually uploaded) transfer payment.
-     * Marks the order paid and advances it from pending to preparing.
+     * Cashier's response to a new (pending) order: accept or reject.
+     *
+     * - accept: confirms the manually-uploaded transfer payment and advances
+     *   the order from pending to preparing.
+     * - reject: marks the order rejected together with its payment, recording
+     *   the cancellation reason.
      */
-    public function confirmPayment(Order $order): JsonResponse
+    public function respond(RespondOrderRequest $request, Order $order): JsonResponse
     {
         $branchId = Auth::guard('cashier')->user()->branch_id;
 
@@ -74,25 +57,55 @@ class OrderController extends Controller
         }
 
         if ($order->status !== OrderStatusEnum::PENDING) {
-            return errorResponse('Only pending orders can be confirmed.', 422);
+            return errorResponse('Only pending orders can be accepted or rejected.', 422);
         }
 
-        if ($order->payment_status === PaymentStatusEnum::PAID) {
+        if ($request->action === 'reject') {
+            $order->update([
+                'status' => OrderStatusEnum::REJECTED->value,
+                'payment_status' => PaymentStatusEnum::REJECTED->value,
+                'cancelled_reason' => $request->cancelled_reason,
+            ]);
+
+            return successResponse(
+                new OrderResource($order->fresh(['customer', 'items.product'])),
+                'Order rejected.'
+            );
+        }
+
+        // accept
+        if ($order->payment_status === PaymentStatusEnum::CONFIRMED) {
             return errorResponse('Payment already confirmed.', 422);
         }
 
-        if (! $order->getFirstMedia(Order::PAYMENT_PROOF_COLLECTION)) {
-            return errorResponse('No payment proof was uploaded for this order.', 422);
-        }
-
         $order->update([
-            'payment_status' => PaymentStatusEnum::PAID->value,
+            'payment_status' => PaymentStatusEnum::CONFIRMED->value,
             'status' => OrderStatusEnum::PREPARING->value,
         ]);
 
         return successResponse(
             new OrderResource($order->fresh(['customer', 'items.product'])),
-            'Payment confirmed.'
+            'Order accepted.'
+        );
+    }
+
+    /**
+     * Advance an already-accepted order along the fulfilment flow:
+     * preparing -> on_the_way -> completed.
+     */
+    public function updateStatus(UpdateOrderStatusRequest $request, Order $order): JsonResponse
+    {
+        $branchId = Auth::guard('cashier')->user()->branch_id;
+
+        if ($order->branch_id !== $branchId) {
+            return errorResponse('Order not found.', 404);
+        }
+
+        $order->update(['status' => $request->status]);
+
+        return successResponse(
+            new OrderResource($order->fresh(['customer', 'items.product'])),
+            'Order status updated.'
         );
     }
 }
