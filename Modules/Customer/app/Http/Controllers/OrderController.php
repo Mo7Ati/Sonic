@@ -4,6 +4,7 @@ namespace Modules\Customer\Http\Controllers;
 
 use App\Enums\OrderStatusEnum;
 use App\Enums\PaymentStatusEnum;
+use App\Events\OrderCreated;
 use App\Http\Controllers\Controller;
 use App\Models\Address;
 use App\Models\BranchPaymentMethod;
@@ -93,6 +94,8 @@ class OrderController extends Controller
 
             $cart->items()->delete();
             $cart->delete();
+
+            event(new OrderCreated($order));
 
             return $order;
         });
