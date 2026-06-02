@@ -9,6 +9,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Modules\Cashier\Http\Resources\OrderResource;
 
 class OrderCreated implements ShouldBroadcast
 {
@@ -30,7 +31,20 @@ class OrderCreated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('cashier.' . $this->order->branch->cashier?->id),
+            new PrivateChannel('cashier.'.$this->order->branch->cashier?->id),
+        ];
+    }
+
+    /**
+     * The order payload, shaped exactly like an item in the cashier orders list,
+     * so the frontend can insert it into its cache without refetching.
+     *
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'order' => OrderResource::make($this->order)->resolve(),
         ];
     }
 }
