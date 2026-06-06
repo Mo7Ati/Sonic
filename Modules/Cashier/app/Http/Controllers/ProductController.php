@@ -14,37 +14,29 @@ class ProductController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $branchId = Auth::guard('cashier')->user()->branch_id;
+        $branch = Auth::guard('cashier')->user()->branch;
 
-        $products = Product::whereHas('branches', fn ($q) => $q->where('branches.id', $branchId))
-            ->with(['category', 'branches' => fn ($q) => $q->where('branches.id', $branchId), 'media'])
-            ->when($request->input('search'), fn ($q, $search) => $q->search($search))
-            ->when($request->input('category_id'), fn ($q, $catId) => $q->where('category_id', $catId))
-            ->when($request->has('is_available'), function ($q) use ($request, $branchId) {
-                $q->whereHas('branches', fn ($bq) => $bq
-                    ->where('branches.id', $branchId)
-                    ->wherePivot('is_available', $request->boolean('is_available'))
-                );
-            })
-            ->orderBy($request->input('sort', 'id'), $request->input('direction', 'desc'))
-            ->paginate($request->input('per_page', 20));
+        $products = $branch->products()
+            ->applyFilters($request)
+            ->with(['category', 'media'])
+            ->get();
 
-        return successResponse(BranchProductResource::collection($products)->response()->getData(true));
+        return successResponse(BranchProductResource::collection($products));
     }
 
     public function update(UpdateBranchProductRequest $request, Product $product): JsonResponse
     {
-        $branchId = Auth::guard('cashier')->user()->branch_id;
+        $branch = Auth::guard('cashier')->user()->branch;
 
-        $exists = $product->branches()->where('branches.id', $branchId)->exists();
+        $exists = $branch->products()->where('products.id', $product->id)->exists();
 
-        if (! $exists) {
+        if (!$exists) {
             return errorResponse('Product not found in this branch.', 404);
         }
 
-        $product->branches()->updateExistingPivot($branchId, $request->validated());
+        $branch->products()->updateExistingPivot($product->id, $request->validated());
 
-        $product->load(['category', 'branches' => fn ($q) => $q->where('branches.id', $branchId), 'media']);
+        $product->load(['category', 'media']);
 
         return successResponse(new BranchProductResource($product), 'Product updated.');
     }

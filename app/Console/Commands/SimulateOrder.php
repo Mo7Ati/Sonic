@@ -27,7 +27,7 @@ class SimulateOrder extends Command
     {
         $branch = $this->resolveBranch();
 
-        if (! $branch) {
+        if (!$branch) {
             $this->error('No branch with a cashier, available products and an active payment method was found.');
 
             return self::FAILURE;
@@ -35,14 +35,14 @@ class SimulateOrder extends Command
 
         $customer = $this->resolveCustomer();
 
-        if (! $customer) {
+        if (!$customer) {
             $this->error('No customer with an address was found. Create a customer with at least one address first.');
 
             return self::FAILURE;
         }
 
         $address = $customer->addresses()->inRandomOrder()->first();
-        $method = $branch->activePaymentMethods()->first();
+        $method = $branch->activePaymentMethods()->inRandomOrder()->first();
 
         $products = $branch->availableProducts()
             ->inRandomOrder()
@@ -105,14 +105,16 @@ class SimulateOrder extends Command
         $this->info("Simulated order #{$order->id} placed on branch #{$branch->id} for customer #{$customer->id}.");
         $this->table(
             ['Order', 'Branch', 'Cashier', 'Customer', 'Items', 'Total'],
-            [[
-                $order->id,
-                $branch->id,
-                $branch->cashier?->id ?? '—',
-                $customer->id,
-                $products->count(),
-                number_format((float) $order->total, 2),
-            ]],
+            [
+                [
+                    $order->id,
+                    $branch->id,
+                    $branch->cashier?->id ?? '—',
+                    $customer->id,
+                    $products->count(),
+                    number_format((float) $order->total, 2),
+                ]
+            ],
         );
 
         return self::SUCCESS;

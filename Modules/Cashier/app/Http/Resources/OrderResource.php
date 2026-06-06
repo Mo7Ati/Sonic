@@ -21,7 +21,7 @@ class OrderResource extends JsonResource
             'address' => collect($this->address_data['fields'])
                 ->map(fn($field) => $field['value'])->join(', '),
             'total' => $this->total,
-            'created_at' => $this->created_at->format('H:i:s A'),
+            'created_at' => $this->created_at->diffForHumans(),
         ];
     }
     public function serializeForShow(): array
