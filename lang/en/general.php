@@ -59,6 +59,7 @@ return [
         'platform_settings' => 'Platform Settings',
         'onboarding_settings' => 'Onboarding settings',
         'address_settings' => 'Address settings',
+        'custom_pages_settings' => 'Custom pages settings',
     ],
     'locales' => [
         'ar' => 'Arabic',

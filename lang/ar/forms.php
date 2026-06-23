@@ -174,4 +174,12 @@ return [
             'red' => 'أحمر',
         ],
     ],
+    'custom_pages' => [
+        'pages_section_heading' => 'الصفحات المخصصة',
+        'pages_section_description' => 'حدد الصفحات المخصصة التي يراها المستخدم عند فتح التطبيق.',
+        'pages' => 'الصفحات',
+        'add_page' => 'إضافة صفحة',
+        'page_title' => 'عنوان الصفحة',
+        'page_content' => 'محتوى الصفحة',
+    ],
 ];

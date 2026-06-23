@@ -61,6 +61,7 @@ return [
         'platform_settings' => 'إعدادات المنصة',
         'onboarding_settings' => 'إعدادات شاشات الترحيب',
         'address_settings' => 'إعدادات العناوين',
+        'custom_pages_settings' => 'إعدادات الصفحات المخصصة',
     ],
 
     'locales' => [

@@ -174,4 +174,12 @@ return [
             'red' => 'Red',
         ],
     ],
+    'custom_pages' => [
+        'pages_section_heading' => 'Custom pages',
+        'pages_section_description' => 'Define the custom pages users see when opening the app.',
+        'pages' => 'Pages',
+        'add_page' => 'Add page',
+        'page_title' => 'Page title',
+        'page_content' => 'Page content',
+    ],
 ];
