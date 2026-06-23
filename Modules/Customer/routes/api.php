@@ -49,6 +49,7 @@ Route::prefix('customer')->group(function () {
     // Orders (require an authenticated customer)
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('orders', [OrderController::class, 'index']);
+        Route::get('orders/{order}', [OrderController::class, 'show']);
         Route::post('orders', [OrderController::class, 'store']);
 
         // Push device tokens

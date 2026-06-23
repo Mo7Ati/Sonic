@@ -11,12 +11,58 @@ use App\Models\BranchPaymentMethod;
 use App\Models\Cart;
 use App\Models\Order;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Modules\Customer\Http\Requests\Orders\PlaceOrderRequest;
 use Modules\Customer\Http\Resources\OrderResource;
 
 class OrderController extends Controller
 {
+    /**
+     * Paginated list of the authenticated customer's orders, newest first.
+     */
+    public function index(Request $request): JsonResponse
+    {
+        $customer = $request->user('sanctum');
+
+        $orders = Order::query()
+            ->where('customer_id', $customer->id)
+            ->with(['branch.store', 'items'])
+            ->withCount('items')
+            ->when(
+                $request->input('filter') === 'active',
+                fn($query) => $query->whereNotIn('status', [
+                    OrderStatusEnum::COMPLETED->value,
+                    OrderStatusEnum::CANCELLED->value,
+                    OrderStatusEnum::REJECTED->value,
+                ]),
+            )
+            ->orderByDesc('id')
+            ->paginate($request->integer('per_page', 15));
+
+        return successResponse(
+            OrderResource::collection($orders)->response()->getData(true),
+            __('messages.data_retrieved_successfully'),
+        );
+    }
+
+    /**
+     * Single order for the authenticated customer.
+     */
+    public function show(Request $request, Order $order): JsonResponse
+    {
+        if ($order->customer_id !== $request->user()->id) {
+            return errorResponse(__('messages.order_not_found'), 404);
+        }
+
+        $order->load(['branch.store', 'items']);
+
+        return successResponse(
+            OrderResource::make($order),
+            __('messages.data_retrieved_successfully'),
+        );
+    }
+
     /**
      * Place an order from the customer's cart.
      *
@@ -100,10 +146,8 @@ class OrderController extends Controller
             return $order;
         });
 
-
-
         return successResponse(
-            OrderResource::make($order->load('items')),
+            OrderResource::make($order->load(['items', 'branch.store'])),
             __('messages.order_placed_successfully'),
             201,
         );

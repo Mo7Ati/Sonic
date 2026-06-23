@@ -49,7 +49,7 @@ return [
         'delivery_time_to' => 'Delivery to (minutes)',
         'minutes_suffix' => 'min',
         'delivery_fee' => 'Delivery fee',
-        'currency_prefix' => '$',
+        'currency_prefix' => '₪',
         'location' => 'Map & service area',
         'location_description' => 'Pin the branch on the map. Optional: paste a GeoJSON polygon or coordinate array for the delivery zone.',
         'latitude' => 'Latitude',

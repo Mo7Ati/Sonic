@@ -49,7 +49,7 @@ return [
         'delivery_time_to' => 'التوصيل إلى (دقائق)',
         'minutes_suffix' => 'د',
         'delivery_fee' => 'أجرة التوصيل',
-        'currency_prefix' => '$',
+        'currency_prefix' => '₪',
         'location' => 'الخريطة ونطاق الخدمة',
         'location_description' => 'حدد موقع الفرع على الخريطة. اختياري: الصق مضلع GeoJSON أو مصفوفة إحداثيات لمنطقة التوصيل.',
         'latitude' => 'خط العرض',
