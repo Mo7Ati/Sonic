@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources\SectionResource\Components;
+namespace App\Filament\Resources\Sections\Components;
 
 use App\Enums\SectionEnum;
 use App\Enums\SectionItemEnum;

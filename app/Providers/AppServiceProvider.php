@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
+use App\Listeners\PruneExpoPushToken;
 use App\Policies\RolePolicy;
+use Illuminate\Notifications\Events\NotificationFailed;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\Models\Role;
 
@@ -25,6 +27,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(Role::class, RolePolicy::class);
+
+        Event::listen(NotificationFailed::class, PruneExpoPushToken::class);
 
         TranslatableTabs::configureUsing(function (TranslatableTabs $component) {
             $component

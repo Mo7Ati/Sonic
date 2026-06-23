@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Sections\Schemas;
 use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
 use App\Enums\SectionEnum;
 use App\Enums\SectionItemEnum;
-use App\Filament\Admin\Resources\SectionResource\Components\SectionItemRepeater;
+use App\Filament\Resources\Sections\Components\SectionItemRepeater;
 use App\Models\StoreCategory;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;

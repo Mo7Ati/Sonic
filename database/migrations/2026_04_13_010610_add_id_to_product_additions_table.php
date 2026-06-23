@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,6 +12,24 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // SQLite cannot drop a composite primary key or add an autoincrement
+        // primary-key column via ALTER, so rebuild the table to the same final
+        // shape. In a fresh migration run the table is empty, so no data copy
+        // is needed; other drivers keep the original in-place alteration.
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            Schema::dropIfExists('product_additions');
+
+            Schema::create('product_additions', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('product_id')->constrained();
+                $table->foreignId('addition_id')->constrained();
+                $table->decimal('price', 10, 2);
+                $table->unique(['product_id', 'addition_id']);
+            });
+
+            return;
+        }
+
         Schema::table('product_additions', function (Blueprint $table) {
             $table->dropForeign(['product_id']);
             $table->dropForeign(['addition_id']);

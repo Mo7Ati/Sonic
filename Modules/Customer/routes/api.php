@@ -5,7 +5,9 @@ use Modules\Customer\Http\Controllers\AddressController;
 use Modules\Customer\Http\Controllers\BranchesController;
 use Modules\Customer\Http\Controllers\CartController;
 use Modules\Customer\Http\Controllers\CustomerController;
+use Modules\Customer\Http\Controllers\DeviceTokenController;
 use Modules\Customer\Http\Controllers\HomeController;
+use Modules\Customer\Http\Controllers\NotificationController;
 use Modules\Customer\Http\Controllers\OrderController;
 use Modules\Customer\Http\Controllers\ProductsController;
 use Modules\Customer\Http\Controllers\StoreCategoriesController;
@@ -46,6 +48,19 @@ Route::prefix('customer')->group(function () {
 
     // Orders (require an authenticated customer)
     Route::middleware('auth:sanctum')->group(function () {
+        Route::get('orders', [OrderController::class, 'index']);
         Route::post('orders', [OrderController::class, 'store']);
+
+        // Push device tokens
+        Route::post('device-tokens', [DeviceTokenController::class, 'store']);
+        Route::delete('device-tokens', [DeviceTokenController::class, 'destroy']);
+
+        // In-app notifications
+        Route::prefix('notifications')->group(function () {
+            Route::get('/', [NotificationController::class, 'index']);
+            Route::get('unread-count', [NotificationController::class, 'unreadCount']);
+            Route::post('read-all', [NotificationController::class, 'markAllAsRead']);
+            Route::post('{id}/read', [NotificationController::class, 'markAsRead']);
+        });
     });
 });

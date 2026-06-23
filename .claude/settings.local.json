@@ -10,7 +10,16 @@
       "WebFetch(domain:laraveldaily.com)",
       "Bash(xargs -I {} find {} -maxdepth 1 -type d)",
       "Bash(npx expo:*)",
-      "mcp__laravel-boost__database-query"
+      "mcp__laravel-boost__database-query",
+      "PowerShell(vendor/bin/pint --dirty --format agent)",
+      "PowerShell(php artisan test tests/Feature/OrderStatusNotificationTest.php tests/Feature/DeviceTokenTest.php tests/Feature/NotificationApiTest.php --compact)",
+      "PowerShell(composer dump-autoload -q)",
+      "PowerShell(php artisan test tests/Feature/OrderStatusNotificationTest.php tests/Feature/DeviceTokenTest.php tests/Feature/NotificationApiTest.php --compact 2>&1)",
+      "PowerShell(php artisan test --compact 2>&1)",
+      "Bash(npx eas-cli *)",
+      "Bash(node -e \"const m=require\\('./node_modules/expo/bundledNativeModules.json'\\); console.log\\('expo-updates expected:', m['expo-updates']\\); console.log\\('expo-dev-client expected:', m['expo-dev-client']\\);\")",
+      "Bash(node -e \"console.log\\(require\\('./node_modules/expo-updates/package.json'\\).version\\)\")",
+      "Bash(node *)"
     ]
   },
   "enableAllProjectMcpServers": true,

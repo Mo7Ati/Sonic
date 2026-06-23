@@ -5,13 +5,16 @@ namespace App\Models;
 use App\Enums\OrderStatusEnum;
 use App\Enums\PaymentMethodTypeEnum;
 use App\Enums\PaymentStatusEnum;
+use App\Observers\OrderObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+#[ObservedBy([OrderObserver::class])]
 #[Fillable([
     'status',
     'payment_status',
@@ -119,11 +122,12 @@ class Order extends Model implements HasMedia
     public function scopeApplyFilters($query, Request $request)
     {
         return $query
-            ->when($request->input('search'), fn($q, $search) => $q->search($search))
-            ->when($request->input('status'), fn($q, $status) => $q->status($status))
-            ->when($request->input('payment_status'), fn($q, $payment_status) => $q->paymentStatus($payment_status))
+            ->when($request->input('search'), fn ($q, $search) => $q->search($search))
+            ->when($request->input('status'), fn ($q, $status) => $q->status($status))
+            ->when($request->input('payment_status'), fn ($q, $payment_status) => $q->paymentStatus($payment_status))
             ->orderBy($request->input('sort', 'id'), $request->input('direction', 'desc'));
     }
+
     public function getIsNewAttribute(): bool
     {
         return $this->status === OrderStatusEnum::PENDING && $this->payment_status === PaymentStatusEnum::WAIT_FOR_CONFIRMATION;
