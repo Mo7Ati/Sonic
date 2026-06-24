@@ -6,23 +6,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-function getPanel()
-{
-    $path = request()->path();
-
-    foreach (PanelsEnum::cases() as $panel) {
-        if (Str::startsWith($path, $panel->value)) {
-            return $panel->value;
-        }
-    }
-
-    return null;
-}
-function isAdminPanel(): bool
-{
-    return request()->is([PanelsEnum::ADMIN->value, PanelsEnum::ADMIN->value.'/*']);
-}
-
 /**
  * Build the single, canonical API response envelope used across the whole application.
  *
@@ -90,20 +73,12 @@ function getByLocale($array)
 {
     return Arr::get($array, locale(), $array['en']);
 }
-function syncMedia($request, $model, $collection)
+function normalizePhone(string $phone): array
 {
-    $temp_ids = $request->input('temp_ids', null);
+    $localNumber = ltrim($phone, '0');
 
-    if ($temp_ids) {
-
-        $media_ids = is_array($temp_ids) ? $temp_ids : explode(',', $temp_ids);
-
-        Media::query()
-            ->whereIn('id', $media_ids)
-            ->get()
-            ->each(function ($media) use ($model, $collection) {
-                $media->move($model, $collection);
-                $media->delete();
-            });
-    }
+    return [
+        '+970' . $localNumber,
+        '+972' . $localNumber,
+    ];
 }

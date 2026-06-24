@@ -4,7 +4,6 @@ namespace Modules\Customer\Http\Requests\Auth;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
 {
@@ -20,9 +19,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:customers,email'],
-            'phone_number' => ['nullable', 'string', 'max:255', 'unique:customers,phone_number'],
-            'password' => ['required', 'confirmed', Password::defaults()],
+            'phone_number' => ['required', 'string', 'regex:/^05[69]\d{7}$/', 'unique:customers,phone_number'],
         ];
     }
 }

@@ -5,7 +5,7 @@ namespace Modules\Customer\Http\Requests\Auth;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class ResendRegistrationOtpRequest extends FormRequest
 {
     public function authorize(): bool
     {

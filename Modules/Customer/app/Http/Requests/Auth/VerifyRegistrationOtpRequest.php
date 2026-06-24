@@ -5,7 +5,7 @@ namespace Modules\Customer\Http\Requests\Auth;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class VerifyRegistrationOtpRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -19,6 +19,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'phone_number' => ['required', 'string', 'regex:/^\+[1-9]\d{6,14}$/'],
+            'code' => ['required', 'string', 'digits:'.config('whatsapp.otp.length')],
         ];
     }
 }

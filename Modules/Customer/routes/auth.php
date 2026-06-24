@@ -7,7 +7,12 @@ Route::prefix('customer')->group(function () {
 
     // Guest routes
     Route::middleware('guest')->group(function () {
-        Route::post('register', [AuthController::class, 'register']);
+        Route::post('register', [AuthController::class, 'register'])
+            ->middleware('throttle:3,1');
+        Route::post('register/verify-otp', [AuthController::class, 'verifyRegistrationOtp'])
+            ->middleware('throttle:10,1');
+        Route::post('register/resend-otp', [AuthController::class, 'resendRegistrationOtp'])
+            ->middleware('throttle:3,1');
         Route::post('login', [AuthController::class, 'login']);
         Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
         Route::post('reset-password', [AuthController::class, 'resetPassword']);
