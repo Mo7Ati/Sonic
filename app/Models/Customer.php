@@ -11,8 +11,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use NotificationChannels\Expo\ExpoPushToken;
 
-#[Fillable(['name', 'email', 'password', 'phone_number', 'phone_verified_at', 'is_active', 'last_seen_at', 'two_factor_secret', 'two_factor_recovery_codes', 'two_factor_confirmed_at'])]
-#[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
+#[Fillable(['phone_number', 'is_active', 'last_seen_at'])]
+#[Hidden(['remember_token'])]
 
 class Customer extends Authenticatable
 {
@@ -23,9 +23,6 @@ class Customer extends Authenticatable
         return [
             'is_active' => 'boolean',
             'last_seen_at' => 'datetime',
-            'email_verified_at' => 'datetime',
-            'phone_verified_at' => 'datetime',
-            'password' => 'hashed',
         ];
     }
 
@@ -42,11 +39,6 @@ class Customer extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class);
-    }
-
-    public function lastUsedAddress()
-    {
-        return $this->belongsTo(Address::class, 'last_used_address_id');
     }
 
     public function deviceTokens(): HasMany

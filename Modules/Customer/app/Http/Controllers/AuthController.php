@@ -7,19 +7,10 @@ use App\Models\Address;
 use App\Models\Cart;
 use App\Models\Customer;
 use App\Services\PhoneVerificationService;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
-use Modules\Customer\Http\Requests\Auth\ForgotPasswordRequest;
-use Modules\Customer\Http\Requests\Auth\LoginRequest;
-use Modules\Customer\Http\Requests\Auth\RegisterRequest;
-use Modules\Customer\Http\Requests\Auth\ResendRegistrationOtpRequest;
-use Modules\Customer\Http\Requests\Auth\ResetPasswordRequest;
-use Modules\Customer\Http\Requests\Auth\VerifyRegistrationOtpRequest;
+use Modules\Customer\Http\Requests\AuthRequest;
+use Modules\Customer\Http\Resources\CustomerResource;
 
 class AuthController extends Controller
 {
@@ -28,62 +19,39 @@ class AuthController extends Controller
     ) {
     }
 
-    public function register(RegisterRequest $request): JsonResponse
+    public function sendOtp(AuthRequest $request): JsonResponse
     {
-        $result = $this->phoneVerificationService->startRegistration($request->validated());
+        $validated = $request->validate($request->sendOtpRules());
+
+        $result = $this->phoneVerificationService->sendOtp($validated);
 
         return successResponse($result, __('auth.phone_verification.sent'));
     }
 
-    public function verifyRegistrationOtp(VerifyRegistrationOtpRequest $request): JsonResponse
+    public function verifyOtp(AuthRequest $request): JsonResponse
     {
-        $customer = $this->phoneVerificationService->verifyRegistrationOtp(
-            $request->validated('phone_number'),
-            $request->validated('code'),
-        );
+        $validated = $request->validate($request->verifyOtpRules());
+
+        $customer = $this->phoneVerificationService->verifyOtp($validated['phone_number'], $validated['otp']);
 
         $this->syncGuestData($request, $customer);
 
         $token = $customer->createToken('customer-token')->plainTextToken;
 
         return successResponse([
-            'customer' => $customer,
+            'customer' => CustomerResource::make($customer),
             'token' => $token,
-        ], __('auth.phone_verification.verified'), 201);
+        ], __('auth.phone_verification.verified'), $customer->wasRecentlyCreated ? 201 : 200);
     }
 
-    public function resendRegistrationOtp(ResendRegistrationOtpRequest $request): JsonResponse
+    public function resendOtp(AuthRequest $request): JsonResponse
     {
-        $result = $this->phoneVerificationService->resendOtp($request->validated('phone_number'));
+        $validated = $request->validate($request->sendOtpRules());
+
+        $result = $this->phoneVerificationService->resendOtp($validated['phone_number']);
 
         return successResponse($result, __('auth.phone_verification.resent'));
     }
-
-    public function login(LoginRequest $request): JsonResponse
-    {
-        $phone = $request->validated('phone_number');
-        $customer = Customer::where('phone_number', $phone)->first();
-
-        if (!$customer) {
-            return errorResponse('The provided credentials are incorrect.', 401);
-        }
-
-        // if (!$customer->is_active) {
-        //     return errorResponse('Your account has been deactivated.', 403);
-        // }
-
-        $customer->update(['last_seen_at' => now()]);
-
-        $this->syncGuestData($request, $customer);
-
-        $token = $customer->createToken('customer-token')->plainTextToken;
-
-        return successResponse([
-            'customer' => $customer,
-            'token' => $token,
-        ], 'Login successful.');
-    }
-
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();

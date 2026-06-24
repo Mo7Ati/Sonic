@@ -13,10 +13,10 @@ use Illuminate\Validation\ValidationException;
 class PhoneVerificationService
 {
     /**
-     * @param  array{name: string, phone_number: string, password: string}  $data
+     * @param  array{phone_number: string}  $data
      * @return array{expires_in: int, phone_masked: string}
      */
-    public function startRegistration(array $data): array
+    public function sendOtp(array $data): array
     {
         $phone = $data['phone_number'];
         $phone_with_both_country_codes = $this->normalizePhone($phone);
@@ -31,9 +31,7 @@ class PhoneVerificationService
         PhoneVerification::query()->create([
             'phone_number' => $phone,
             'otp_hash' => Hash::make($otp),
-            'payload' => [
-                'name' => $data['name'],
-            ],
+            'payload' => [],
             'expires_at' => now()->addMinutes($expiryMinutes),
         ]);
 
@@ -45,10 +43,9 @@ class PhoneVerificationService
         ];
     }
 
-    public function verifyRegistrationOtp(string $phoneNumber, string $code): Customer
+    public function verifyOtp(string $phoneNumber, string $code): Customer
     {
-        $phone = $this->normalizePhone($phoneNumber);
-        $verification = $this->findActiveVerification($phone);
+        $verification = $this->findActiveVerification($phoneNumber);
 
         if ($verification->isExpired()) {
             throw ValidationException::withMessages([
@@ -70,22 +67,18 @@ class PhoneVerificationService
             ]);
         }
 
-        if (Customer::query()->where('phone_number', $phone)->exists()) {
-            throw ValidationException::withMessages([
-                'phone_number' => [__('validation.unique', ['attribute' => 'phone number'])],
-            ]);
-        }
-
-        $customer = Customer::query()->create([
-            'name' => $verification->payload['name'],
-            'phone_number' => $phone,
-            'password' => Hash::make(Str::random(10)),
-            'phone_verified_at' => now(),
-        ]);
-
         $verification->update(['verified_at' => now()]);
 
-        event(new Registered($customer));
+        $customer = Customer::query()->firstOrCreate(
+            ['phone_number' => $phoneNumber],
+            ['is_active' => true],
+        );
+
+        if ($customer->wasRecentlyCreated) {
+            event(new Registered($customer));
+        }
+
+        $customer->update(['last_seen_at' => now()]);
 
         return $customer;
     }
@@ -95,8 +88,8 @@ class PhoneVerificationService
      */
     public function resendOtp(string $phoneNumber): array
     {
-        $phone = $this->normalizePhone($phoneNumber);
-        $verification = $this->findActiveVerification($phone);
+        $phone_with_both_country_codes = $this->normalizePhone($phoneNumber);
+        $verification = $this->findActiveVerification($phoneNumber);
 
         if ($verification->isExpired()) {
             throw ValidationException::withMessages([
@@ -121,11 +114,11 @@ class PhoneVerificationService
             'expires_at' => now()->addMinutes($expiryMinutes),
         ]);
 
-        $this->dispatchOtp($phone, $otp, $expiryMinutes);
+        $this->dispatchOtp($phone_with_both_country_codes, $otp, $expiryMinutes);
 
         return [
             'expires_in' => $expiryMinutes * 60,
-            'phone_masked' => $this->maskPhone($phone),
+            'phone_masked' => $this->maskPhone($phoneNumber),
         ];
     }
 
