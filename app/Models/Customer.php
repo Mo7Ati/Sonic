@@ -11,7 +11,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use NotificationChannels\Expo\ExpoPushToken;
 
-#[Fillable(['phone_number', 'is_active', 'last_seen_at'])]
+#[Fillable(['name', 'phone_number', 'is_active', 'last_seen_at'])]
 #[Hidden(['remember_token'])]
 
 class Customer extends Authenticatable

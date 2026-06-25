@@ -10,14 +10,14 @@ use App\Services\PhoneVerificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Customer\Http\Requests\AuthRequest;
+use Modules\Customer\Http\Requests\UpdateProfileRequest;
 use Modules\Customer\Http\Resources\CustomerResource;
 
 class AuthController extends Controller
 {
     public function __construct(
         private readonly PhoneVerificationService $phoneVerificationService,
-    ) {
-    }
+    ) {}
 
     public function sendOtp(AuthRequest $request): JsonResponse
     {
@@ -52,6 +52,7 @@ class AuthController extends Controller
 
         return successResponse($result, __('auth.phone_verification.resent'));
     }
+
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
@@ -61,7 +62,19 @@ class AuthController extends Controller
 
     public function user(Request $request): JsonResponse
     {
-        return successResponse($request->user());
+        return successResponse(CustomerResource::make($request->user()));
+    }
+
+    public function updateProfile(UpdateProfileRequest $request): JsonResponse
+    {
+        /** @var Customer $customer */
+        $customer = $request->user();
+        $customer->update($request->validated());
+
+        return successResponse(
+            CustomerResource::make($customer->fresh()),
+            __('messages.data_saved_successfully'),
+        );
     }
 
     private function syncGuestData(Request $request, Customer $customer): void
