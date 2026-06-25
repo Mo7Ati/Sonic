@@ -27,9 +27,9 @@ class CustomerController extends Controller
 
     public function updateProfile(UpdateProfileRequest $request)
     {
+        $data = $request->validate($request->sendOtpRules());
         $customer = auth('sanctum')->user();
 
-        $data = $request->validated();
         $otpSent = false;
 
         // Update name immediately
@@ -42,10 +42,7 @@ class CustomerController extends Controller
             isset($data['phone_number']) &&
             $data['phone_number'] !== $customer->phone_number
         ) {
-            $customer->pending_phone_number = $data['phone_number'];
-
-            $this->phoneVerificationService->sendOtp($data['phone_number']);
-
+            $otp = $this->phoneVerificationService->sendOtp($data['phone_number']);
             $otpSent = true;
         }
 
@@ -53,6 +50,7 @@ class CustomerController extends Controller
 
         return successResponse([
             'otp_sent' => $otpSent,
+            'otp' => $otp,
         ], __('messages.profile_updated_successfully'));
     }
 

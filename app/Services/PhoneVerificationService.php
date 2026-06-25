@@ -32,8 +32,8 @@ class PhoneVerificationService
             'payload' => [],
             'expires_at' => now()->addMinutes($expiryMinutes),
         ]);
+        $this->dispatchOtp($phone_with_both_country_codes, $otp, $expiryMinutes);
         return $otp;
-        // $this->dispatchOtp($phone_with_both_country_codes, $otp, $expiryMinutes);
     }
 
     public function verifyOtp(string $phoneNumber, string $code): void
