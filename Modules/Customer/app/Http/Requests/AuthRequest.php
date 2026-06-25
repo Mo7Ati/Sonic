@@ -15,7 +15,7 @@ class AuthRequest extends FormRequest
     /**
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function sendOtpRules(): array
+    public function loginRules(): array
     {
         return [
             'phone_number' => ['required', 'string', 'regex:/^05[69]\d{7}$/'],

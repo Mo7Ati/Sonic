@@ -7,9 +7,11 @@ use App\Models\Address;
 use App\Models\Cart;
 use App\Models\Customer;
 use App\Services\PhoneVerificationService;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Customer\Http\Requests\AuthRequest;
+use Modules\Customer\Http\Requests\ChangePhoneRequest;
 use Modules\Customer\Http\Requests\UpdateProfileRequest;
 use Modules\Customer\Http\Resources\CustomerResource;
 
@@ -17,22 +19,39 @@ class AuthController extends Controller
 {
     public function __construct(
         private readonly PhoneVerificationService $phoneVerificationService,
-    ) {}
+    ) {
+    }
 
-    public function sendOtp(AuthRequest $request): JsonResponse
+    public function login(AuthRequest $request): JsonResponse
     {
-        $validated = $request->validate($request->sendOtpRules());
+        $validated = $request->validate($request->loginRules());
 
-        $result = $this->phoneVerificationService->sendOtp($validated);
+        $otp = $this->phoneVerificationService->sendOtp($validated['phone_number']);
 
-        return successResponse($result, __('auth.phone_verification.sent'));
+        return successResponse([
+            'otp' => $otp,
+        ], __('auth.phone_verification.sent'));
     }
 
     public function verifyOtp(AuthRequest $request): JsonResponse
     {
         $validated = $request->validate($request->verifyOtpRules());
 
-        $customer = $this->phoneVerificationService->verifyOtp($validated['phone_number'], $validated['otp']);
+        $phoneNumber = $validated['phone_number'];
+        $otp = $validated['otp'];
+
+        $this->phoneVerificationService->verifyOtp($phoneNumber, $otp);
+
+        $customer = Customer::query()->firstOrCreate(
+            ['phone_number' => $phoneNumber],
+            ['is_active' => true],
+        );
+
+        if ($customer->wasRecentlyCreated) {
+            event(new Registered($customer));
+        }
+
+        $customer->update(['last_seen_at' => now()]);
 
         $this->syncGuestData($request, $customer);
 
@@ -48,9 +67,9 @@ class AuthController extends Controller
     {
         $validated = $request->validate($request->sendOtpRules());
 
-        $result = $this->phoneVerificationService->resendOtp($validated['phone_number']);
+        $this->phoneVerificationService->resendOtp($validated['phone_number']);
 
-        return successResponse($result, __('auth.phone_verification.resent'));
+        return successResponse(null, __('auth.phone_verification.resent'));
     }
 
     public function logout(Request $request): JsonResponse
@@ -64,19 +83,6 @@ class AuthController extends Controller
     {
         return successResponse(CustomerResource::make($request->user()));
     }
-
-    public function updateProfile(UpdateProfileRequest $request): JsonResponse
-    {
-        /** @var Customer $customer */
-        $customer = $request->user();
-        $customer->update($request->validated());
-
-        return successResponse(
-            CustomerResource::make($customer->fresh()),
-            __('messages.data_saved_successfully'),
-        );
-    }
-
     private function syncGuestData(Request $request, Customer $customer): void
     {
         $sessionId = $request->header('X-Session-Id');

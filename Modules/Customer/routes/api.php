@@ -48,6 +48,11 @@ Route::prefix('customer')->group(function () {
 
     // Orders (require an authenticated customer)
     Route::middleware('auth:sanctum')->group(function () {
+        // Profile
+        Route::patch('update-profile', [CustomerController::class, 'updateProfile']);
+        Route::post('verify-new-phone', [CustomerController::class, 'verifyNewPhone']);
+
+        // Orders
         Route::get('orders', [OrderController::class, 'index']);
         Route::get('orders/{order}', [OrderController::class, 'show']);
         Route::post('orders', [OrderController::class, 'store']);

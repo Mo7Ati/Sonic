@@ -14,4 +14,12 @@ return [
         'verified' => 'Phone verified successfully. Registration complete.',
     ],
 
+    'phone_change' => [
+        'same_phone' => 'This is already your phone number.',
+        'already_taken' => 'This phone number is already registered to another account.',
+        'sent' => 'Verification code sent to your new phone number.',
+        'resent' => 'Verification code resent to your new phone number.',
+        'verified' => 'Phone number updated successfully.',
+    ],
+
 ];

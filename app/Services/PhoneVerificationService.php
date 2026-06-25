@@ -13,80 +13,42 @@ use Illuminate\Validation\ValidationException;
 class PhoneVerificationService
 {
     /**
-     * @param  array{phone_number: string}  $data
-     * @return array{expires_in: int, phone_masked: string}
+     * @param  string  $phone_number
      */
-    public function sendOtp(array $data): array
+    public function sendOtp(string $phone_number): string
     {
-        $phone = $data['phone_number'];
-        $phone_with_both_country_codes = $this->normalizePhone($phone);
+        $phone_with_both_country_codes = $this->normalizePhone($phone_number);
         $otp = $this->generateOtp();
         $expiryMinutes = (int) config('whatsapp.otp.expiry_minutes');
 
         PhoneVerification::query()
-            ->where('phone_number', $phone)
+            ->where('phone_number', $phone_number)
             ->whereNull('verified_at')
             ->delete();
 
         PhoneVerification::query()->create([
-            'phone_number' => $phone,
+            'phone_number' => $phone_number,
             'otp_hash' => Hash::make($otp),
             'payload' => [],
             'expires_at' => now()->addMinutes($expiryMinutes),
         ]);
-
-        $this->dispatchOtp($phone_with_both_country_codes, $otp, $expiryMinutes);
-
-        return [
-            'expires_in' => $expiryMinutes * 60,
-            'phone_masked' => $this->maskPhone($phone),
-        ];
+        return $otp;
+        // $this->dispatchOtp($phone_with_both_country_codes, $otp, $expiryMinutes);
     }
 
-    public function verifyOtp(string $phoneNumber, string $code): Customer
+    public function verifyOtp(string $phoneNumber, string $code): void
     {
         $verification = $this->findActiveVerification($phoneNumber);
 
-        if ($verification->isExpired()) {
-            throw ValidationException::withMessages([
-                'code' => [__('auth.phone_verification.expired')],
-            ]);
-        }
-
-        if ($verification->hasExceededMaxAttempts()) {
-            throw ValidationException::withMessages([
-                'code' => [__('auth.phone_verification.too_many_attempts')],
-            ]);
-        }
-
-        if (!Hash::check($code, $verification->otp_hash)) {
-            $verification->increment('attempts');
-
-            throw ValidationException::withMessages([
-                'code' => [__('auth.phone_verification.invalid')],
-            ]);
-        }
+        $this->assertValidOtp($verification, $code);
 
         $verification->update(['verified_at' => now()]);
-
-        $customer = Customer::query()->firstOrCreate(
-            ['phone_number' => $phoneNumber],
-            ['is_active' => true],
-        );
-
-        if ($customer->wasRecentlyCreated) {
-            event(new Registered($customer));
-        }
-
-        $customer->update(['last_seen_at' => now()]);
-
-        return $customer;
     }
 
     /**
      * @return array{expires_in: int, phone_masked: string}
      */
-    public function resendOtp(string $phoneNumber): array
+    public function resendOtp(string $phoneNumber): void
     {
         $phone_with_both_country_codes = $this->normalizePhone($phoneNumber);
         $verification = $this->findActiveVerification($phoneNumber);
@@ -115,11 +77,107 @@ class PhoneVerificationService
         ]);
 
         $this->dispatchOtp($phone_with_both_country_codes, $otp, $expiryMinutes);
+    }
+
+    /**
+     * @return array{expires_in: int, phone_masked: string}
+     */
+    public function sendPhoneChangeOtp(Customer $customer, string $newPhone): array
+    {
+        $this->assertPhoneAvailableForChange($customer, $newPhone);
+
+        $otp = $this->generateOtp();
+        $expiryMinutes = (int) config('whatsapp.otp.expiry_minutes');
+
+        PhoneVerification::query()
+            ->where('phone_number', $newPhone)
+            ->whereNull('verified_at')
+            ->where('payload->purpose', 'phone_change')
+            ->delete();
+
+        PhoneVerification::query()->create([
+            'phone_number' => $newPhone,
+            'otp_hash' => Hash::make($otp),
+            'payload' => [
+                'purpose' => 'phone_change',
+                'customer_id' => $customer->id,
+            ],
+            'expires_at' => now()->addMinutes($expiryMinutes),
+        ]);
+
+        $this->dispatchOtp($this->normalizePhone($newPhone), $otp, $expiryMinutes);
 
         return [
             'expires_in' => $expiryMinutes * 60,
-            'phone_masked' => $this->maskPhone($phoneNumber),
+            'phone_masked' => $this->maskPhone($newPhone),
         ];
+    }
+
+    /**
+     * @return array{expires_in: int, phone_masked: string}
+     */
+    public function resendPhoneChangeOtp(Customer $customer, string $newPhone): array
+    {
+        $this->assertPhoneAvailableForChange($customer, $newPhone);
+
+        $verification = $this->findPhoneChangeVerification($customer, $newPhone);
+
+        if ($verification->isExpired()) {
+            throw ValidationException::withMessages([
+                'phone_number' => [__('auth.phone_verification.expired')],
+            ]);
+        }
+
+        $cooldown = (int) config('whatsapp.otp.resend_cooldown_seconds');
+
+        if ($verification->updated_at->copy()->addSeconds($cooldown)->isFuture()) {
+            throw ValidationException::withMessages([
+                'phone_number' => [__('auth.phone_verification.resend_cooldown')],
+            ]);
+        }
+
+        $otp = $this->generateOtp();
+        $expiryMinutes = (int) config('whatsapp.otp.expiry_minutes');
+
+        $verification->update([
+            'otp_hash' => Hash::make($otp),
+            'attempts' => 0,
+            'expires_at' => now()->addMinutes($expiryMinutes),
+        ]);
+
+        $this->dispatchOtp($this->normalizePhone($newPhone), $otp, $expiryMinutes);
+
+        return [
+            'expires_in' => $expiryMinutes * 60,
+            'phone_masked' => $this->maskPhone($newPhone),
+        ];
+    }
+
+    public function verifyPhoneChangeOtp(Customer $customer, string $newPhone, string $code, ?string $name = null): Customer
+    {
+        $this->assertPhoneAvailableForChange($customer, $newPhone);
+
+        $verification = $this->findPhoneChangeVerification($customer, $newPhone);
+
+        $this->assertValidOtp($verification, $code);
+
+        $verification->update(['verified_at' => now()]);
+
+        if (Customer::query()->where('phone_number', $newPhone)->where('id', '!=', $customer->id)->exists()) {
+            throw ValidationException::withMessages([
+                'phone_number' => [__('auth.phone_change.already_taken')],
+            ]);
+        }
+
+        $updates = ['phone_number' => $newPhone];
+
+        if ($name !== null) {
+            $updates['name'] = $name;
+        }
+
+        $customer->update($updates);
+
+        return $customer->fresh();
     }
 
     public function normalizePhone(string $phone): array
@@ -147,6 +205,63 @@ class PhoneVerificationService
         }
 
         return $verification;
+    }
+
+    private function findPhoneChangeVerification(Customer $customer, string $phone): PhoneVerification
+    {
+        $verification = PhoneVerification::query()
+            ->where('phone_number', $phone)
+            ->whereNull('verified_at')
+            ->where('payload->purpose', 'phone_change')
+            ->where('payload->customer_id', $customer->id)
+            ->latest()
+            ->first();
+
+        if ($verification === null) {
+            throw ValidationException::withMessages([
+                'phone_number' => [__('auth.phone_verification.not_found')],
+            ]);
+        }
+
+        return $verification;
+    }
+
+    private function assertPhoneAvailableForChange(Customer $customer, string $newPhone): void
+    {
+        if ($newPhone === $customer->phone_number) {
+            throw ValidationException::withMessages([
+                'phone_number' => [__('auth.phone_change.same_phone')],
+            ]);
+        }
+
+        if (Customer::query()->where('phone_number', $newPhone)->where('id', '!=', $customer->id)->exists()) {
+            throw ValidationException::withMessages([
+                'phone_number' => [__('auth.phone_change.already_taken')],
+            ]);
+        }
+    }
+
+    private function assertValidOtp(PhoneVerification $verification, string $code): void
+    {
+        if ($verification->isExpired()) {
+            throw ValidationException::withMessages([
+                'otp' => [__('auth.phone_verification.expired')],
+            ]);
+        }
+
+        if ($verification->hasExceededMaxAttempts()) {
+            throw ValidationException::withMessages([
+                'otp' => [__('auth.phone_verification.too_many_attempts')],
+            ]);
+        }
+
+        if (!Hash::check($code, $verification->otp_hash)) {
+            $verification->increment('attempts');
+
+            throw ValidationException::withMessages([
+                'otp' => [__('auth.phone_verification.invalid')],
+            ]);
+        }
     }
 
     private function generateOtp(): string
