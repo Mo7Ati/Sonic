@@ -50,7 +50,7 @@ class CustomerController extends Controller
 
         return successResponse([
             'otp_sent' => $otpSent,
-            'otp' => $otp,
+            ...($otpSent ? ['otp' => $otp] : []),
         ], __('messages.profile_updated_successfully'));
     }
 
