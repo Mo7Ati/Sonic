@@ -180,6 +180,22 @@ class Branch extends Model implements HasMedia
         });
     }
 
+    public function scopeFastDelivery(Builder $query, mixed $value): Builder
+    {
+        return $query->when(filter_var($value, FILTER_VALIDATE_BOOLEAN), function (Builder $q): Builder {
+            return $q->where('delivery_time_to', '<=', 30);
+        });
+    }
+
+    public function scopeSortBy(Builder $query, ?string $sortBy): Builder
+    {
+        return match ($sortBy) {
+            'delivery_time' => $query->orderBy('delivery_time_to'),
+            'delivery_fee' => $query->orderBy('delivery_fee'),
+            default => $query,
+        };
+    }
+
     public function getDeliveryTimeAttribute()
     {
         return $this->delivery_time_from.'-'.$this->delivery_time_to;
@@ -198,6 +214,8 @@ class Branch extends Model implements HasMedia
             ->active()
             ->search($request->input('search'))
             ->storeCategory($request->input('store_category_id'))
-            ->averageRate($request->input('average_rate'));
+            ->averageRate($request->input('average_rate'))
+            ->fastDelivery($request->input('fast_delivery'))
+            ->sortBy($request->input('sort_by'));
     }
 }
