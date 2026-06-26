@@ -1,6 +1,7 @@
 <?php
 
-test('the home page redirects to the admin panel', function () {
-    $this->get('/')
-        ->assertRedirect('/admin');
+test('the application returns a successful response', function () {
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
 });
