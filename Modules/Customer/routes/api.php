@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\Customer\Http\Controllers\AddressController;
 use Modules\Customer\Http\Controllers\BranchesController;
 use Modules\Customer\Http\Controllers\CartController;
+use Modules\Customer\Http\Controllers\ConfigController;
 use Modules\Customer\Http\Controllers\CustomerController;
 use Modules\Customer\Http\Controllers\DeviceTokenController;
 use Modules\Customer\Http\Controllers\HomeController;
@@ -14,6 +15,7 @@ use Modules\Customer\Http\Controllers\StoreCategoriesController;
 
 Route::prefix('customer')->group(function () {
     Route::get('splash', [CustomerController::class, 'index']);
+    Route::get('config', [ConfigController::class, 'index']);
     Route::get('home', [HomeController::class, 'index']);
 
     // Store Categories
@@ -48,7 +50,8 @@ Route::prefix('customer')->group(function () {
 
     // Orders (require an authenticated customer)
     Route::middleware('auth:sanctum')->group(function () {
-        // Profile
+        // Identity / profile
+        Route::get('me', [CustomerController::class, 'me']);
         Route::patch('update-profile', [CustomerController::class, 'updateProfile']);
         Route::post('verify-new-phone', [CustomerController::class, 'verifyNewPhone']);
 

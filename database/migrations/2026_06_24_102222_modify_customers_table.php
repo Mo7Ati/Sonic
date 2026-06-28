@@ -4,13 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::table('customers', function (Blueprint $table) {
+            // Drop the unique index before the column it covers, otherwise SQLite
+            // leaves a dangling index referencing the removed "email" column.
+            $table->dropUnique('customers_email_unique');
+
             $table->dropColumn([
                 'email',
                 'password',

@@ -4,6 +4,7 @@ namespace Modules\Customer\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Address;
+use App\Settings\AddressSettings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Customer\Http\Requests\Address\StoreAddressRequest;
@@ -12,6 +13,17 @@ use Modules\Customer\Http\Resources\AddressResource;
 
 class AddressController extends Controller
 {
+    /**
+     * The platform-defined address field templates used to render the address form.
+     */
+    public function fields(): JsonResponse
+    {
+        return successResponse(
+            app(AddressSettings::class)->fields,
+            __('messages.data_retrieved_successfully'),
+        );
+    }
+
     /**
      * List all addresses for the current customer or guest session.
      */

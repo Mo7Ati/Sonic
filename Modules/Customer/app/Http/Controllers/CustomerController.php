@@ -4,15 +4,16 @@ namespace Modules\Customer\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Services\PhoneVerificationService;
+use Illuminate\Http\JsonResponse;
 use Modules\Customer\Http\Requests\UpdateProfileRequest;
+use Modules\Customer\Http\Resources\CustomerResource;
 use Modules\Customer\Http\Resources\SplashResource;
 
 class CustomerController extends Controller
 {
     public function __construct(
         private readonly PhoneVerificationService $phoneVerificationService,
-    ) {
-    }
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -22,6 +23,19 @@ class CustomerController extends Controller
         return successResponse(
             SplashResource::make(request()),
             __('messages.data_retrieved_successfully')
+        );
+    }
+
+    /**
+     * Resolve the authenticated customer. Used by the mobile app at startup to
+     * verify the persisted token and decide guest vs authenticated. Returns 401
+     * (via auth:sanctum) when the token is missing or stale.
+     */
+    public function me(): JsonResponse
+    {
+        return successResponse(
+            CustomerResource::make(auth('sanctum')->user()),
+            __('messages.data_retrieved_successfully'),
         );
     }
 
